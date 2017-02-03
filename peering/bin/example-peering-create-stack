@@ -27,6 +27,8 @@ speed_max=400
 run_default=10
 pause_default=2
 next_default=5
+create_default=15
+create_attempts=20
 
 interactive=1
 speed=100
@@ -252,7 +254,7 @@ if [ $setup = 1 ]; then
     echo
     echo "============================================================"
     echo
-    echo "$(printf '%2d' S1). Configure IROPS Example Keypair"
+    echo "S1. Configure IROPS Example Keypair"
     echo
     echo "============================================================"
     echo
@@ -306,7 +308,7 @@ if [ $setup = 1 ]; then
     echo
     echo "============================================================"
     echo
-    echo "$(printf '%2d' S2). Import IROPS Example Keypair"
+    echo "S2. Import IROPS Example Keypair"
     echo
     echo "============================================================"
     echo
@@ -388,7 +390,7 @@ echo "                                --template-body file://$templatesdir/VPC-P
 echo "                                --parameters ParameterKey=SourceVPCNetwork,ParameterValue=$source_vpc_network \\"
 echo "                                             ParameterKey=SourcePublicSubnetNetwork,ParameterValue=$source_private_subnet_network \\"
 echo "                                             ParameterKey=DestVPCNetwork,ParameterValue=$dest_vpc_network \\"
-echo "                                             ParameterKey=DestPublicSubnetNetwork,ParameterValue=$dest_private_subnet_network \\"
+echo "                                             ParameterKey=DestPrivateSubnetNetwork,ParameterValue=$dest_private_subnet_network \\"
 echo "                                             ParameterKey=InstanceType,ParameterValue=$instance_type \\"
 echo "                                             ParameterKey=KeyPair,ParameterValue=$keypair \\"
 echo "                                --capabilities CAPABILITY_IAM \\"
@@ -396,7 +398,7 @@ echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
 echo "                                       Key=System,Value=$SYSTEM_NAME \\"
 echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
 echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
-echo "                                --profile $profile --region $region --output text"
+echo "                                --profile $profile --region $region --output table"
 
 if aws cloudformation describe-stacks --stack-name PeeringExample \
                                       --profile $profile --region $region --output text &> /dev/null; then
@@ -417,7 +419,7 @@ else
         echo ">                                 --parameters ParameterKey=SourceVPCNetwork,ParameterValue=$source_vpc_network \\"
         echo ">                                              ParameterKey=SourcePublicSubnetNetwork,ParameterValue=$source_private_subnet_network \\"
         echo ">                                              ParameterKey=DestVPCNetwork,ParameterValue=$dest_vpc_network \\"
-        echo ">                                              ParameterKey=DestPublicSubnetNetwork,ParameterValue=$dest_private_subnet_network \\"
+        echo ">                                              ParameterKey=DestPrivateSubnetNetwork,ParameterValue=$dest_private_subnet_network \\"
         echo ">                                              ParameterKey=InstanceType,ParameterValue=$instance_type \\"
         echo ">                                              ParameterKey=KeyPair,ParameterValue=$keypair \\"
         echo ">                                 --capabilities CAPABILITY_IAM \\"
@@ -425,21 +427,21 @@ else
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
-        echo ">                                 --profile $profile --region $region --output text"
+        echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation create-stack --stack-name PeeringExample \
                                         --template-body file://$templatesdir/VPC-Peering-Example.json \
                                         --parameters ParameterKey=SourceVPCNetwork,ParameterValue=$source_vpc_network \
                                                      ParameterKey=SourcePublicSubnetNetwork,ParameterValue=$source_private_subnet_network \
                                                      ParameterKey=DestVPCNetwork,ParameterValue=$dest_vpc_network \
-                                                     ParameterKey=DestPublicSubnetNetwork,ParameterValue=$dest_private_subnet_network \
+                                                     ParameterKey=DestPrivateSubnetNetwork,ParameterValue=$dest_private_subnet_network \
                                                      ParameterKey=InstanceType,ParameterValue=$instance_type \
-                                                     ParameterKey=KeyPair,ParameterValue=$key_pair \
+                                                     ParameterKey=KeyPair,ParameterValue=$keypair \
                                         --capabilities CAPABILITY_IAM \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=$ENVIRONMENT_NAME \
                                                Key=Owner,Value=$OWNER_EMAIL \
-                                        --profile $profile --region $region --output text
+                                        --profile $profile --region $region --output table
 
         stack_created=y
 
@@ -487,7 +489,7 @@ else
         echo ">                                    --profile $profile --region $region --output table"
         aws cloudformation describe-stacks --stack-name PeeringExample \
                                            --query 'Stacks[].[StackName,StackStatus]' \
-                                           --profile $profile --region $region --output table
+                                           --profile $profile --region $region --output table 2> /dev/null
         pause
 
         attempt=0
@@ -499,7 +501,7 @@ else
             echo ">                                          --profile $profile --region $region --output table"
             aws cloudformation describe-stack-events --stack-name PeeringExample --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
-                                                     --profile $profile --region $region --output table
+                                                     --profile $profile --region $region --output table 2> /dev/null
 
             status=$(aws cloudformation describe-stacks --stack-name PeeringExample \
                                                         --query 'Stacks[].StackStatus' \
@@ -563,7 +565,7 @@ if [ $verbose = 1 ]; then
     echo "Commands:"
     echo
     echo "aws cloudformation describe-stack-resources --stack-name PeeringExample \\"
-    echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus,Timestamp]' \\"
+    echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
     echo "                                            --profile $profile --region $region --output table"
 
     run 50
@@ -571,11 +573,11 @@ if [ $verbose = 1 ]; then
     if [ $choice = y ]; then
         echo
         echo "# aws cloudformation describe-stack-resources --stack-name PeeringExample \\"
-        echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus,Timestamp]' \\"
+        echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
         echo ">                                             --profile $profile --region $region --output table"
         aws cloudformation describe-stack-resources --stack-name PeeringExample \
-                                                    --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus,Timestamp]' \
-                                                    --profile $profile --region $region --output table
+                                                    --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
+                                                    --profile $profile --region $region --output table 2> /dev/null
 
         next
     fi

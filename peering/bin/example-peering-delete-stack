@@ -27,6 +27,8 @@ speed_max=400
 run_default=10
 pause_default=2
 next_default=5
+delete_default=15
+delete_attempts=20
 
 interactive=1
 speed=100
@@ -239,7 +241,7 @@ echo
 echo "Commands:"
 echo
 echo "aws cloudformation delete-stack --stack-name PeeringExample \\"
-echo "                                --profile $profile --region $region --output text"
+echo "                                --profile $profile --region $region --output table"
 
 if ! aws cloudformation describe-stacks --stack-name PeeringExample \
                                       --profile $profile --region $region --output text &> /dev/null; then
@@ -255,10 +257,10 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "aws cloudformation delete-stack --stack-name PeeringExample \\"
-        echo "                                --profile $profile --region $region --output text"
+        echo "# aws cloudformation delete-stack --stack-name PeeringExample \\"
+        echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation delete-stack --stack-name PeeringExample \
-                                        --profile $profile --region $region --output text
+                                        --profile $profile --region $region --output table
 
         next
     fi
@@ -307,8 +309,8 @@ else
         pause
 
         attempt=0
-        ((seconds=$create_default * $speed / 100))
-        while ((attempt++ <= create_attempts)); do
+        ((seconds=$delete_default * $speed / 100))
+        while ((attempt++ <= delete_attempts)); do
             echo
             echo "# aws cloudformation describe-stack-events --stack-name PeeringExample --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
