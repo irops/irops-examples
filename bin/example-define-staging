@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Defines the IROPS Examples Environment Variables for the Staging Environment
+#
+
+# EXAMPLES
+export EXAMPLES_HOME=~/Workspaces/irops/irops-examples
+
+# Company
+export COMPANY_CODE=demo
+export COMPANY_NAME="Demo"
+
+# Location
+export LOCATION_CODE=uw2
+export LOCATION_NAME="US-West-2"
+
+# Environment
+export ENVIRONMENT_CODE=s
+export ENVIRONMENT_NAME="Staging"
+
+# System
+export SYSTEM_CODE=irops
+export SYSTEM_NAME="IROPS"
+export SYSTEM_VPC_NETWORK=81
+export SYSTEM_VPC_SUBNET=0
+
+# Application
+export APPLICATION_CODE=eng
+export APPLICATION_NAME="Engine"
+export APPLICATION_INSTANCE_TYPE="t2.micro"
+export APPLICATION_INSTANCE_MIN="2"
+export APPLICATION_INSTANCE_MAX="4"
+
+# Region
+export AWS_DEFAULT_REGION=us-west-2
+
+# Account
+export AWS_ACCOUNT_NAME=irops
+export AWS_ACCOUNT_NUMBER=624812452220
+
+# User
+export AWS_USER_NAME=$USER
+
+# Credentials
+export AWS_DEFAULT_PROFILE=$AWS_ACCOUNT_NAME-$AWS_USER_NAME
+
+# Keys
+export AWS_SSH_KEY_ID=example
+export AWS_SSH_KEY_FILE=${HOME}/.ssh/irops_${AWS_SSH_KEY_ID}_id_rsa
+
+# Notification
+unset SNS_ADMINISTRATOR_TOPIC
+
+# Owner
+export OWNER_EMAIL=$USER@hpe.com
+
+# Home
+export ADMINISTRATOR_NETWORK=72.215.187.176/28
