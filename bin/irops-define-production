@@ -44,7 +44,7 @@ export AWS_USER_NAME=$USER
 export AWS_DEFAULT_PROFILE=$AWS_ACCOUNT_NAME-$AWS_USER_NAME
 
 # Keys
-export AWS_SSH_KEY_ID=example
+export AWS_SSH_KEY_ID=demo
 export AWS_SSH_KEY_FILE=${HOME}/.ssh/irops_${AWS_SSH_KEY_ID}_id_rsa
 
 # Notification
