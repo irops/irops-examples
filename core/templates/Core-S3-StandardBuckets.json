@@ -1,0 +1,59 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Core-S3-StandardBuckets Template. This creates Standard S3 Buckets within the Core Account. This initially will use public-read access, but we will add bucket policies and more fine-grained security policies over time.",
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Account Information" },
+          "Parameters" : [ "AccountAlias" ]
+        }
+      ],
+
+      "ParameterLabels" : {
+        "AccountAlias" : { "default" : "Account Alias" }
+      }
+    }
+  },
+
+  "Parameters" : {
+    "AccountAlias" : {
+      "Description" : "Unique Alias of the Account (if defined). If specified, the Alias instead of the AccountID is appended to bucket names to insure uniqueness.",
+      "Type" : "String",
+      "MinLength" : 2,
+      "MaxLength" : 32,
+      "Default" : "noalias",
+      "AllowedPattern" : "^[a-z][-a-z0-9]*$",
+      "ConstraintDescription" : "must begin with a lower case letter and contain lower case letters and numbers, or a hyphen."
+    }
+  },
+
+  "Conditions" : {
+    "AppendAccountId" : { "Fn::Equals" : [ { "Ref" : "AccountAlias" }, "noalias" ] }
+  },
+
+  "Resources" : {
+    "TemplatesBucket" : {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "BucketName" : { "Fn::Join" : [ "-", [ "templates", { "Fn::If" : [ "AppendAccountId", { "Ref" : "AWS::AccountId" }, { "Ref" : "AccountAlias" } ]} ]]},
+        "AccessControl" : "PublicRead",
+        "VersioningConfiguration" : { "Status" : "Enabled" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Core-TemplatesBucket" }
+        ]
+      },
+      "DeletionPolicy" : "Retain"
+    }
+  },
+
+  "Outputs" : {
+    "TemplatesBucket" : {
+      "Description" : "The Templates Bucket Name",
+      "Value" :  { "Ref" : "TemplatesBucket" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-TemplatesBucket" }}
+    }
+  }
+}
