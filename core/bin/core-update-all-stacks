@@ -195,9 +195,12 @@ unset EC2_CERT
 
 start=$(date +%s)
 
-$IROPS_HOME/core/bin/core-update-sns-standardtopics-stack $options
-$IROPS_HOME/core/bin/core-update-sns-standardsubscriptions-stack $options
-$IROPS_HOME/core/bin/core-update-s3-standardbuckets-stack $options
+$IROPS_HOME/core/bin/core-update-standardtopics-stack $options
+
+$IROPS_HOME/core/bin/core-update-standardsubscriptions-stack $options
+$IROPS_HOME/core/bin/core-update-customsubscriptions-stack $options
+
+$IROPS_HOME/core/bin/core-update-standardbuckets-stack $options
 
 end=$(date +%s)
 

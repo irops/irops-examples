@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script updates the S3 StandardBuckets Stack in the Core Account.
+# This script updates the StandardSubscriptions Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -195,9 +195,9 @@ if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region
     unset templatesbucket
 fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardBuckets \
+if ! aws cloudformation describe-stacks --stack-name StandardSubscriptions \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to update - StandardBuckets Stack does not exist!"
+    echo "Unable to update - StandardSubscriptions Stack does not exist!"
     exit 2
 fi
 
@@ -244,7 +244,7 @@ fi
 
 
 ((++step))
-if [ ! -z $templatesbucket ]; then
+if [ -n $templatesbucket ]; then
     clear
     echo
     echo "============================================================"
@@ -257,7 +257,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-S3-StandardBuckets.json' \\"
+    echo "            --exclude '*' --include 'Core-StandardSubscriptions.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -265,11 +265,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-S3-StandardBuckets.json' \\"
+    echo ">             --exclude '*' --include 'Core-StandardSubscriptions.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-S3-StandardBuckets.json' \
+                --exclude '*' --include 'Core-StandardSubscriptions.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -282,7 +282,7 @@ echo
 echo "============================================================"
 echo
 echo "$(printf '%2d' $step). Update the Stack"
-if [ ! -z $templatesbucket ]; then
+if [ -n $templatesbucket ]; then
     echo "    - Referencing the template as an S3 URL"
 else
     echo "    - Referencing the template as a local File"
@@ -292,15 +292,13 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-if [ ! -z $templatesbucket ]; then
-    echo "aws cloudformation update-stack --stack-name StandardBuckets \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \\"
-    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+if [ -n $templatesbucket ]; then
+    echo "aws cloudformation update-stack --stack-name StandardSubscriptions \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 else
-    echo "aws cloudformation update-stack --stack-name StandardBuckets \\"
-    echo "                                --template-body file://$templatesdir/Core-S3-StandardBuckets.json \\"
-    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+    echo "aws cloudformation update-stack --stack-name StandardSubscriptions \\"
+    echo "                                --template-body file://$templatesdir/Core-StandardSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -308,23 +306,19 @@ run
 
 if [ $choice = y ]; then
     echo
-    if [ ! -z $templatesbucket ]; then
-        echo "# aws cloudformation update-stack --stack-name StandardBuckets \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \\"
-        echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+    if [ -n $templates-bucket ]; then
+        echo "# aws cloudformation update-stack --stack-name StandardSubscriptions \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name StandardBuckets \
-                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \
-                                        --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
+        aws cloudformation update-stack --stack-name StandardSubscriptions \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \
                                         --profile $profile --region $region --output table
     else
-        echo "# aws cloudformation update-stack --stack-name StandardBuckets \\"
-        echo ">                                 --template-body file://$templatesdir/Core-S3-StandardBuckets.json \\"
-        echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+        echo "# aws cloudformation update-stack --stack-name StandardSubscriptions \\"
+        echo ">                                 --template-body file://$templatesdir/Core-StandardSubscriptions.json \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name StandardBuckets \
-                                        --template-body file://$templatesdir/Core-S3-StandardBuckets.json \
-                                        --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
+        aws cloudformation update-stack --stack-name StandardSubscriptions \
+                                        --template-body file://$templatesdir/Core-StandardSubscriptions.json \
                                         --profile $profile --region $region --output table
     fi
 
@@ -343,15 +337,15 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name StandardBuckets \\"
+echo "aws cloudformation describe-stacks --stack-name StandardSubscriptions \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name StandardBuckets --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if [ "$(aws cloudformation describe-stacks --stack-name StandardBuckets \
+if [ "$(aws cloudformation describe-stacks --stack-name StandardSubscriptions \
                                            --query 'Stacks[].StackStatus' \
                                            --profile $profile --region $region --output text 2> /dev/null)" = "UPDATE_COMPLETE" ]; then
     echo
@@ -366,10 +360,10 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name StandardBuckets \\"
+        echo "# aws cloudformation describe-stacks --stack-name StandardSubscriptions \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name StandardBuckets \
+        aws cloudformation describe-stacks --stack-name StandardSubscriptions \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
@@ -378,14 +372,14 @@ else
         seconds=$update_default
         while ((attempt++ <= update_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name StandardBuckets --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name StandardBuckets --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name StandardBuckets \
+            status=$(aws cloudformation describe-stacks --stack-name StandardSubscriptions \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
@@ -446,7 +440,7 @@ if [ $verbose = 1 ]; then
     echo
     echo "Commands:"
     echo
-    echo "aws cloudformation describe-stack-resources --stack-name StandardBuckets \\"
+    echo "aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \\"
     echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
     echo "                                            --profile $profile --region $region --output table"
 
@@ -454,10 +448,10 @@ if [ $verbose = 1 ]; then
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stack-resources --stack-name StandardBuckets \\"
+        echo "# aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \\"
         echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
         echo ">                                             --profile $profile --region $region --output table"
-        aws cloudformation describe-stack-resources --stack-name StandardBuckets \
+        aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \
                                                     --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
                                                     --profile $profile --region $region --output table 2> /dev/null
 

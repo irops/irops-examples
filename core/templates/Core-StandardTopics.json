@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Core-SNS-StandardTopics Template. This creates Standard SNS Topics within the Core Account.",
+  "Description" : "Core-StandardTopics Template. This creates Standard SNS Topics within the Core Account.",
 
   "Resources" : {
     "AdministratorsTopic" : {
@@ -9,6 +9,30 @@
       "Properties" : {
         "TopicName" : "Administrators",
         "DisplayName" : "Administrators"
+      }
+    },
+
+    "ManagersTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "TopicName" : "Managers",
+        "DisplayName" : "Managers"
+      }
+    },
+
+    "DevelopersTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "TopicName" : "Developers",
+        "DisplayName" : "Developers"
+      }
+    },
+
+    "UsersTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "TopicName" : "Users",
+        "DisplayName" : "Users"
       }
     },
 
@@ -66,6 +90,24 @@
       "Description" : "The Administrators Topic ARN",
       "Value" :  { "Ref" : "AdministratorsTopic" },
       "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorsTopic" }}
+    },
+
+    "ManagersTopic" : {
+      "Description" : "The Managers Topic ARN",
+      "Value" :  { "Ref" : "ManagersTopic" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ManagersTopic" }}
+    },
+
+    "DevelopersTopic" : {
+      "Description" : "The Developers Topic ARN",
+      "Value" :  { "Ref" : "DevelopersTopic" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DevelopersTopic" }}
+    },
+
+    "UsersTopic" : {
+      "Description" : "The Users Topic ARN",
+      "Value" :  { "Ref" : "UsersTopic" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-UsersTopic" }}
     },
 
     "EventsTopic" : {

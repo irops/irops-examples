@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script deletes the SNS StandardTopics Stack in the Core Account.
+# This script deletes the CustomSubscriptions Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -182,9 +182,9 @@ if ! grep -s -q "\[profile $profile]" ~/.aws/config; then
     exit 53
 fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardTopics \
+if ! aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to delete - StandardTopics Stack does not exist!"
+    echo "Unable to delete - CustomSubscriptions Stack does not exist!"
     exit 2
 fi
 
@@ -240,10 +240,10 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation delete-stack --stack-name StandardTopics \\"
+echo "aws cloudformation delete-stack --stack-name CustomSubscriptions \\"
 echo "                                --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name StandardTopics \
+if ! aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                       --profile $profile --region $region --output text &> /dev/null; then
     echo
     tput rev
@@ -257,9 +257,9 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation delete-stack --stack-name StandardTopics \\"
+        echo "# aws cloudformation delete-stack --stack-name CustomSubscriptions \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation delete-stack --stack-name StandardTopics \
+        aws cloudformation delete-stack --stack-name CustomSubscriptions \
                                         --profile $profile --region $region --output table
 
         next
@@ -278,15 +278,15 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name StandardTopics \\"
+echo "aws cloudformation describe-stacks --stack-name CustomSubscriptions \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name StandardTopics --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name StandardTopics \
+if ! aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                         --profile $profile --region $region &> /dev/null; then
     echo
     tput rev
@@ -300,10 +300,10 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name StandardTopics \\"
+        echo "# aws cloudformation describe-stacks --stack-name CustomSubscriptions \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name StandardTopics \
+        aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
@@ -312,14 +312,14 @@ else
         seconds=$delete_default
         while ((attempt++ <= delete_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name StandardTopics --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name StandardTopics --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name StandardTopics \
+            status=$(aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then

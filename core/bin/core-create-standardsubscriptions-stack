@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script creates the SNS StandardSubscriptions Stack in the Core Account.
+# This script creates the StandardSubscriptions Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -251,7 +251,7 @@ if [ -n $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \\"
+    echo "            --exclude '*' --include 'Core-StandardSubscriptions.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ -n $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \\"
+    echo ">             --exclude '*' --include 'Core-StandardSubscriptions.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \
+                --exclude '*' --include 'Core-StandardSubscriptions.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -288,11 +288,11 @@ echo "Commands:"
 echo
 if [ -n $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name StandardSubscriptions \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name StandardSubscriptions \\"
-    echo "                                --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \\"
+    echo "                                --template-body file://$templatesdir/Core-StandardSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -312,17 +312,17 @@ else
         echo
         if [ -n $templates-bucket ]; then
             echo "# aws cloudformation create-stack --stack-name StandardSubscriptions \\"
-            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \\"
+            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardSubscriptions \
-                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \
+                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardSubscriptions.json \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name StandardSubscriptions \\"
-            echo ">                                 --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \\"
+            echo ">                                 --template-body file://$templatesdir/Core-StandardSubscriptions.json \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardSubscriptions \
-                                            --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \
+                                            --template-body file://$templatesdir/Core-StandardSubscriptions.json \
                                             --profile $profile --region $region --output table
         fi
 

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Core-SNS-StandardSubscriptions Template. This creates Standard SNS Subscriptions to Standard Topics within the Core Account.",
+  "Description" : "Core-CustomSubscriptions Template. This creates Custom SNS Subscriptions to Standard Topics within the Core Account.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Core-S3-StandardBuckets Template. This creates Standard S3 Buckets within the Core Account. This initially will use public-read access, but we will add bucket policies and more fine-grained security policies over time.",
+  "Description" : "Core-StandardBuckets Template. This creates Standard S3 Buckets within the Core Account. This initially will use public-read access, but we will add bucket policies and more fine-grained security policies over time.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {

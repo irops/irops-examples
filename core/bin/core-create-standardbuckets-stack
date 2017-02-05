@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script creates the S3 StandardBuckets Stack in the Core Account.
+# This script creates the StandardBuckets Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -251,7 +251,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-S3-StandardBuckets.json' \\"
+    echo "            --exclude '*' --include 'Core-StandardBuckets.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-S3-StandardBuckets.json' \\"
+    echo ">             --exclude '*' --include 'Core-StandardBuckets.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-S3-StandardBuckets.json' \
+                --exclude '*' --include 'Core-StandardBuckets.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -288,12 +288,12 @@ echo "Commands:"
 echo
 if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name StandardBuckets \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \\"
     echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name StandardBuckets \\"
-    echo "                                --template-body file://$templatesdir/Core-S3-StandardBuckets.json \\"
+    echo "                                --template-body file://$templatesdir/Core-StandardBuckets.json \\"
     echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
     echo "                                --profile $profile --region $region --output table"
 fi
@@ -314,20 +314,20 @@ else
         echo
         if [ ! -z $templatesbucket ]; then
             echo "# aws cloudformation create-stack --stack-name StandardBuckets \\"
-            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \\"
+            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \\"
             echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardBuckets \
-                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Core-S3-StandardBuckets.json \
+                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \
                                             --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name StandardBuckets \\"
-            echo ">                                 --template-body file://$templatesdir/Core-S3-StandardBuckets.json \\"
+            echo ">                                 --template-body file://$templatesdir/Core-StandardBuckets.json \\"
             echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardBuckets \
-                                            --template-body file://$templatesdir/Core-S3-StandardBuckets.json \
+                                            --template-body file://$templatesdir/Core-StandardBuckets.json \
                                             --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
                                             --profile $profile --region $region --output table
         fi

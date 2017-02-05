@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script updates the SNS StandardSubscriptions Stack in the Core Account.
+# This script updates the CustomSubscriptions Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -195,9 +195,9 @@ if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region
     unset templatesbucket
 fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardSubscriptions \
+if ! aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to update - StandardSubscriptions Stack does not exist!"
+    echo "Unable to update - CustomSubscriptions Stack does not exist!"
     exit 2
 fi
 
@@ -257,7 +257,7 @@ if [ -n $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \\"
+    echo "            --exclude '*' --include 'Core-CustomSubscriptions.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -265,11 +265,11 @@ if [ -n $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \\"
+    echo ">             --exclude '*' --include 'Core-CustomSubscriptions.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-SNS-StandardSubscriptions.json' \
+                --exclude '*' --include 'Core-CustomSubscriptions.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -293,12 +293,12 @@ echo
 echo "Commands:"
 echo
 if [ -n $templatesbucket ]; then
-    echo "aws cloudformation update-stack --stack-name StandardSubscriptions \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \\"
+    echo "aws cloudformation update-stack --stack-name CustomSubscriptions \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 else
-    echo "aws cloudformation update-stack --stack-name StandardSubscriptions \\"
-    echo "                                --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \\"
+    echo "aws cloudformation update-stack --stack-name CustomSubscriptions \\"
+    echo "                                --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -307,18 +307,18 @@ run
 if [ $choice = y ]; then
     echo
     if [ -n $templates-bucket ]; then
-        echo "# aws cloudformation update-stack --stack-name StandardSubscriptions \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \\"
+        echo "# aws cloudformation update-stack --stack-name CustomSubscriptions \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name StandardSubscriptions \
-                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Core-SNS-StandardSubscriptions.json \
+        aws cloudformation update-stack --stack-name CustomSubscriptions \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \
                                         --profile $profile --region $region --output table
     else
-        echo "# aws cloudformation update-stack --stack-name StandardSubscriptions \\"
-        echo ">                                 --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \\"
+        echo "# aws cloudformation update-stack --stack-name CustomSubscriptions \\"
+        echo ">                                 --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name StandardSubscriptions \
-                                        --template-body file://$templatesdir/Core-SNS-StandardSubscriptions.json \
+        aws cloudformation update-stack --stack-name CustomSubscriptions \
+                                        --template-body file://$templatesdir/Core-CustomSubscriptions.json \
                                         --profile $profile --region $region --output table
     fi
 
@@ -337,15 +337,15 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name StandardSubscriptions \\"
+echo "aws cloudformation describe-stacks --stack-name CustomSubscriptions \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if [ "$(aws cloudformation describe-stacks --stack-name StandardSubscriptions \
+if [ "$(aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                            --query 'Stacks[].StackStatus' \
                                            --profile $profile --region $region --output text 2> /dev/null)" = "UPDATE_COMPLETE" ]; then
     echo
@@ -360,10 +360,10 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name StandardSubscriptions \\"
+        echo "# aws cloudformation describe-stacks --stack-name CustomSubscriptions \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name StandardSubscriptions \
+        aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
@@ -372,14 +372,14 @@ else
         seconds=$update_default
         while ((attempt++ <= update_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name StandardSubscriptions --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name CustomSubscriptions --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name StandardSubscriptions \
+            status=$(aws cloudformation describe-stacks --stack-name CustomSubscriptions \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
@@ -440,7 +440,7 @@ if [ $verbose = 1 ]; then
     echo
     echo "Commands:"
     echo
-    echo "aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \\"
+    echo "aws cloudformation describe-stack-resources --stack-name CustomSubscriptions \\"
     echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
     echo "                                            --profile $profile --region $region --output table"
 
@@ -448,10 +448,10 @@ if [ $verbose = 1 ]; then
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \\"
+        echo "# aws cloudformation describe-stack-resources --stack-name CustomSubscriptions \\"
         echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
         echo ">                                             --profile $profile --region $region --output table"
-        aws cloudformation describe-stack-resources --stack-name StandardSubscriptions \
+        aws cloudformation describe-stack-resources --stack-name CustomSubscriptions \
                                                     --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
                                                     --profile $profile --region $region --output table 2> /dev/null
 
