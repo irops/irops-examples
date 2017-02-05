@@ -1,9 +1,15 @@
 #!/bin/bash
 #
-# This script deletes the IAM StandardGroups Stack in the Identity Account.
+# This script updates the StandardUsers Stack in the Identity Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
+#
+# Since this script is run during initial bootstrapping of an Account which
+# may not yet have certain S3 buckets created to hold templates, the
+# script checks for the existance of the S3 templates bucket, and if it
+# exists, it will upload the template to the bucket and run it via URL,
+# but if it does not exist, it will run it via file.
 #
 
 #  1. Initalize Environment
@@ -22,8 +28,8 @@ speed_max=400
 run_default=10
 pause_default=2
 next_default=5
-delete_default=15
-delete_attempts=20
+update_default=15
+update_attempts=20
 
 interactive=1
 speed=100
@@ -31,6 +37,9 @@ verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
 account=${AWS_ACCOUNT_NAME:-irops}
 user=${AWS_USER_NAME:-administrator}
+
+templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
+templatespath=/identity
 
 
 #  2. Define functions
@@ -177,14 +186,18 @@ fi
 profile=$account-$user
 
 if ! grep -s -q "\[profile $profile]" ~/.aws/config; then
-    echo "Could not find AWS ($account) Account Demo ($user) User AWSCLI profile!"
+    echo "Could not find ($account) Account ($user) User AWSCLI profile!"
     echo "Expected to find: [profile $profile] in ~/.aws/config"
     exit 53
 fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardGroups \
+if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region $region 2> /dev/null; then
+    unset templatesbucket
+fi
+
+if ! aws cloudformation describe-stacks --stack-name StandardUsers \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to delete - StandardGroups Stack does not exist!"
+    echo "Unable to update - StandardUsers Stack does not exist!"
     exit 2
 fi
 
@@ -198,6 +211,7 @@ unset EC2_CERT
 #  5. Run
 
 start=$(date +%s)
+
 
 ((++step))
 if [ $verbose = 1 ]; then
@@ -230,40 +244,35 @@ fi
 
 
 ((++step))
-clear
-echo
-echo "============================================================"
-echo
-echo "$(printf '%2d' $step). Delete the Stack"
-echo
-echo "============================================================"
-echo
-echo "Commands:"
-echo
-echo "aws cloudformation delete-stack --stack-name StandardGroups \\"
-echo "                                --profile $profile --region $region --output table"
-
-if ! aws cloudformation describe-stacks --stack-name StandardGroups \
-                                      --profile $profile --region $region --output text &> /dev/null; then
+if [ -n $templatesbucket ]; then
+    clear
     echo
-    tput rev
-    echo "Already Deleted!"
-    tput sgr0
+    echo "============================================================"
+    echo
+    echo "$(printf '%2d' $step). Sync Template to ($templatesbucket) Bucket"
+    echo
+    echo "============================================================"
+    echo
+    echo "Commands:"
+    echo
+    echo "aws s3 sync $templatesdir \\"
+    echo "            s3://$templatesbucket$templatespath \\"
+    echo "            --exclude '*' --include 'Identity-StandardUsers.json' \\"
+    echo "            --profile $profile --region $region --output table"
 
     next 50
 
-else
-    run
+    echo
+    echo "# aws s3 sync $templatesdir \\"
+    echo ">             s3://$templatesbucket$templatespath \\"
+    echo ">             --exclude '*' --include 'Identity-StandardUsers.json' \\"
+    echo ">             --profile $profile --region $region --output table"
+    aws s3 sync $templatesdir \
+                s3://$templatesbucket$templatespath \
+                --exclude '*' --include 'Identity-StandardUsers.json' \
+                --profile $profile --region $region --output table
 
-    if [ $choice = y ]; then
-        echo
-        echo "# aws cloudformation delete-stack --stack-name StandardGroups \\"
-        echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation delete-stack --stack-name StandardGroups \
-                                        --profile $profile --region $region --output table
-
-        next
-    fi
+    next 50
 fi
 
 
@@ -272,25 +281,94 @@ clear
 echo
 echo "============================================================"
 echo
-echo "$(printf '%2d' $step). Monitor Stack deletion"
+echo "$(printf '%2d' $step). Update the Stack"
+if [ -n $templatesbucket ]; then
+    echo "    - Referencing the template as an S3 URL"
+else
+    echo "    - Referencing the template as a local File"
+fi
 echo
 echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name StandardGroups \\"
+if [ -n $templatesbucket ]; then
+    echo "aws cloudformation update-stack --stack-name StandardUsers \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardUsers.json \\"
+    echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
+    echo "                                --profile $profile --region $region --output table"
+else
+    echo "aws cloudformation update-stack --stack-name StandardUsers \\"
+    echo "                                --template-body file://$templatesdir/Identity-StandardUsers.json \\"
+    echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
+    echo "                                --profile $profile --region $region --output table"
+fi
+
+run
+
+if [ $choice = y ]; then
+    echo
+    if [ -n $templates-bucket ]; then
+        echo "# aws cloudformation update-stack --stack-name StandardUsers \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardUsers.json \\"
+        echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+        echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
+        echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
+        echo ">                                 --profile $profile --region $region --output table"
+        aws cloudformation update-stack --stack-name StandardUsers \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardUsers.json \
+                                        --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                                     ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
+                                        --capabilities CAPABILITY_NAMED_IAM \
+                                        --profile $profile --region $region --output table
+    else
+        echo "# aws cloudformation update-stack --stack-name StandardUsers \\"
+        echo ">                                 --template-body file://$templatesdir/Identity-StandardUsers.json \\"
+        echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+        echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
+        echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
+        echo ">                                 --profile $profile --region $region --output table"
+        aws cloudformation update-stack --stack-name StandardUsers \
+                                        --template-body file://$templatesdir/Identity-StandardUsers.json \
+                                        --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                                     ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
+                                        --capabilities CAPABILITY_NAMED_IAM \
+                                        --profile $profile --region $region --output table
+    fi
+
+    next
+fi
+
+
+((++step))
+clear
+echo
+echo "============================================================"
+echo
+echo "$(printf '%2d' $step). Monitor Stack update"
+echo
+echo "============================================================"
+echo
+echo "Commands:"
+echo
+echo "aws cloudformation describe-stacks --stack-name StandardUsers \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name StandardGroups --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name StandardUsers --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name StandardGroups \
-                                        --profile $profile --region $region &> /dev/null; then
+if [ "$(aws cloudformation describe-stacks --stack-name StandardUsers \
+                                           --query 'Stacks[].StackStatus' \
+                                           --profile $profile --region $region --output text 2> /dev/null)" = "UPDATE_COMPLETE" ]; then
     echo
     tput rev
-    echo "Already Deleted!"
+    echo "Already Complete!"
     tput sgr0
 
     next 50
@@ -300,29 +378,29 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name StandardGroups \\"
+        echo "# aws cloudformation describe-stacks --stack-name StandardUsers \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name StandardGroups \
+        aws cloudformation describe-stacks --stack-name StandardUsers \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
 
         attempt=0
-        seconds=$delete_default
-        while ((attempt++ <= delete_attempts)); do
+        seconds=$update_default
+        while ((attempt++ <= update_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name StandardGroups --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name StandardUsers --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name StandardGroups --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name StandardUsers --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name StandardGroups \
+            status=$(aws cloudformation describe-stacks --stack-name StandardUsers \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
-            if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
+            if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else
                 echo
@@ -362,6 +440,38 @@ if [ $verbose = 1 ]; then
         echo ">                                    --profile $profile --region $region --output table"
         aws cloudformation describe-stacks --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table
+
+        next
+    fi
+fi
+
+
+((++step))
+if [ $verbose = 1 ]; then
+    clear
+    echo
+    echo "============================================================"
+    echo
+    echo "$(printf '%2d' $step). List Resulting Stack Resources"
+    echo
+    echo "============================================================"
+    echo
+    echo "Commands:"
+    echo
+    echo "aws cloudformation describe-stack-resources --stack-name StandardUsers \\"
+    echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
+    echo "                                            --profile $profile --region $region --output table"
+
+    run 50
+
+    if [ $choice = y ]; then
+        echo
+        echo "# aws cloudformation describe-stack-resources --stack-name StandardUsers \\"
+        echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
+        echo ">                                             --profile $profile --region $region --output table"
+        aws cloudformation describe-stack-resources --stack-name StandardUsers \
+                                                    --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
+                                                    --profile $profile --region $region --output table 2> /dev/null
 
         next
     fi

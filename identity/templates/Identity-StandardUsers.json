@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Identity-IAM-StandardUsers Template. This creates Standard IAM Users within the Identity Account.",
+  "Description" : "Identity-StandardUsers Template. This creates Standard IAM Users within the Identity Account.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
@@ -42,75 +42,57 @@
   },
 
   "Resources" : {
-    "mcrawford2User" : {
+    "administratorUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "mcrawford2",
+        "UserName": "administrator",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
       }
     },
 
-    "kmccutchen2User" : {
+    "networkadministratorUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "kmccutchen2",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
-      }
-    },
-
-    "gveazey2User" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "gveazey2",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
-      }
-    },
-
-    "networkadminUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "networkadmin",
+        "UserName": "networkadministrator",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-NetworkAdministratorsGroup" }} ]
       }
     },
 
-    "systemadminUser" : {
+    "systemadministratorUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "systemadmin",
+        "UserName": "systemadministrator",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-SystemAdministratorsGroup" }} ]
       }
     },
 
-    "databaseadminUser" : {
+    "databaseadministratorUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "databaseadmin",
+        "UserName": "databaseadministrator",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-DatabaseAdministratorsGroup" }} ]
       }
     },
 
-    "poweruserUser" : {
+    "developerUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "poweruser",
+        "UserName": "developer",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-PowerUsersGroup" }} ]
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-DevelopersGroup" }} ]
       }
     },
 
-    "readerUser" : {
+    "userUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "reader",
+        "UserName": "user",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-ReadersGroup" }} ]
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     }
   }

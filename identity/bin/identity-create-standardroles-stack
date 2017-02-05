@@ -1,9 +1,15 @@
 #!/bin/bash
 #
-# This script deletes the IAM StandardManagedPolicies Stack in the Identity Account.
+# This script creates the StandardRoles Stack in the Identity Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
+#
+# Since this script is run during initial bootstrapping of an Account which 
+# may not yet have certain S3 buckets created to hold templates, the
+# script checks for the existance of the S3 templates bucket, and if it 
+# exists, it will upload the template to the bucket and run it via URL,
+# but if it does not exist, it will run it via file.
 #
 
 #  1. Initalize Environment
@@ -22,8 +28,8 @@ speed_max=400
 run_default=10
 pause_default=2
 next_default=5
-delete_default=15
-delete_attempts=20
+create_default=15
+create_attempts=20
 
 interactive=1
 speed=100
@@ -31,6 +37,9 @@ verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
 account=${AWS_ACCOUNT_NAME:-irops}
 user=${AWS_USER_NAME:-administrator}
+
+templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
+templatespath=/identity
 
 
 #  2. Define functions
@@ -177,15 +186,13 @@ fi
 profile=$account-$user
 
 if ! grep -s -q "\[profile $profile]" ~/.aws/config; then
-    echo "Could not find AWS ($account) Account Demo ($user) User AWSCLI profile!"
+    echo "Could not find ($account) Account ($user) User AWSCLI profile!"
     echo "Expected to find: [profile $profile] in ~/.aws/config"
     exit 53
 fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
-                                        --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to delete - StandardManagedPolicies Stack does not exist!"
-    exit 2
+if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region $region 2> /dev/null; then
+    unset templatesbucket
 fi
 
 # Prevent certain environment variables from breaking commands
@@ -198,6 +205,7 @@ unset EC2_CERT
 #  5. Run
 
 start=$(date +%s)
+
 
 ((++step))
 if [ $verbose = 1 ]; then
@@ -230,24 +238,73 @@ fi
 
 
 ((++step))
+if [ -n $templatesbucket ]; then
+    clear
+    echo
+    echo "============================================================"
+    echo
+    echo "$(printf '%2d' $step). Sync Template to ($templatesbucket) Bucket"
+    echo
+    echo "============================================================"
+    echo
+    echo "Commands:"
+    echo
+    echo "aws s3 sync $templatesdir \\"
+    echo "            s3://$templatesbucket$templatespath \\"
+    echo "            --exclude '*' --include 'Identity-StandardRoles.json' \\"
+    echo "            --profile $profile --region $region --output table"
+
+    next 50
+
+    echo
+    echo "# aws s3 sync $templatesdir \\"
+    echo ">             s3://$templatesbucket$templatespath \\"
+    echo ">             --exclude '*' --include 'Identity-StandardRoles.json' \\"
+    echo ">             --profile $profile --region $region --output table"
+    aws s3 sync $templatesdir \
+                s3://$templatesbucket$templatespath \
+                --exclude '*' --include 'Identity-StandardRoles.json' \
+                --profile $profile --region $region --output table
+
+    next 50
+fi
+
+
+((++step))
 clear
 echo
 echo "============================================================"
 echo
-echo "$(printf '%2d' $step). Delete the Stack"
+echo "$(printf '%2d' $step). Create the Stack"
+if [ -n $templatesbucket ]; then
+    echo "    - Referencing the template as an S3 URL"
+else
+    echo "    - Referencing the template as a local File"
+fi
 echo
 echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation delete-stack --stack-name StandardManagedPolicies \\"
-echo "                                --profile $profile --region $region --output table"
+if [ -n $templatesbucket ]; then
+    echo "aws cloudformation create-stack --stack-name StandardRoles \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardRoles.json \\"
+    echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
+    echo "                                --profile $profile --region $region --output table"
+else
+    echo "aws cloudformation create-stack --stack-name StandardRoles \\"
+    echo "                                --template-body file://$templatesdir/Identity-StandardRoles.json \\"
+    echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
+    echo "                                --profile $profile --region $region --output table"
+fi
 
-if ! aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
+if aws cloudformation describe-stacks --stack-name StandardRoles \
                                       --profile $profile --region $region --output text &> /dev/null; then
     echo
     tput rev
-    echo "Already Deleted!"
+    echo "Already Created!"
     tput sgr0
 
     next 50
@@ -257,10 +314,29 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation delete-stack --stack-name StandardManagedPolicies \\"
-        echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation delete-stack --stack-name StandardManagedPolicies \
-                                        --profile $profile --region $region --output table
+        if [ -n $templates-bucket ]; then
+            echo "# aws cloudformation create-stack --stack-name StandardRoles \\"
+            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardRoles.json \\"
+            echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+            echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
+            echo ">                                 --profile $profile --region $region --output table"
+            aws cloudformation create-stack --stack-name StandardRoles \
+                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardRoles.json \
+                                            --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                            --capabilities CAPABILITY_NAMED_IAM \
+                                            --profile $profile --region $region --output table
+        else
+            echo "# aws cloudformation create-stack --stack-name StandardRoles \\"
+            echo ">                                 --template-body file://$templatesdir/Identity-StandardRoles.json \\"
+            echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+            echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
+            echo ">                                 --profile $profile --region $region --output table"
+            aws cloudformation create-stack --stack-name StandardRoles \
+                                            --template-body file://$templatesdir/Identity-StandardRoles.json \
+                                            --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                            --capabilities CAPABILITY_NAMED_IAM \
+                                            --profile $profile --region $region --output table
+        fi
 
         next
     fi
@@ -272,25 +348,26 @@ clear
 echo
 echo "============================================================"
 echo
-echo "$(printf '%2d' $step). Monitor Stack deletion"
+echo "$(printf '%2d' $step). Monitor Stack creation"
 echo
 echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name StandardManagedPolicies \\"
+echo "aws cloudformation describe-stacks --stack-name StandardRoles \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name StandardManagedPolicies --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name StandardRoles --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
-                                        --profile $profile --region $region &> /dev/null; then
+if [ "$(aws cloudformation describe-stacks --stack-name StandardRoles \
+                                           --query 'Stacks[].StackStatus' \
+                                           --profile $profile --region $region --output text 2> /dev/null)" = "CREATE_COMPLETE" ]; then
     echo
     tput rev
-    echo "Already Deleted!"
+    echo "Already Complete!"
     tput sgr0
 
     next 50
@@ -300,26 +377,26 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name StandardManagedPolicies \\"
+        echo "# aws cloudformation describe-stacks --stack-name StandardRoles \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
+        aws cloudformation describe-stacks --stack-name StandardRoles \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
 
         attempt=0
-        seconds=$delete_default
-        while ((attempt++ <= delete_attempts)); do
+        seconds=$create_default
+        while ((attempt++ <= create_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name StandardManagedPolicies --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name StandardRoles --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name StandardManagedPolicies --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name StandardRoles --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
+            status=$(aws cloudformation describe-stacks --stack-name StandardRoles \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
@@ -362,6 +439,38 @@ if [ $verbose = 1 ]; then
         echo ">                                    --profile $profile --region $region --output table"
         aws cloudformation describe-stacks --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table
+
+        next
+    fi
+fi
+
+
+((++step))
+if [ $verbose = 1 ]; then
+    clear
+    echo
+    echo "============================================================"
+    echo
+    echo "$(printf '%2d' $step). List Resulting Stack Resources"
+    echo
+    echo "============================================================"
+    echo
+    echo "Commands:"
+    echo
+    echo "aws cloudformation describe-stack-resources --stack-name StandardRoles \\"
+    echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
+    echo "                                            --profile $profile --region $region --output table"
+
+    run 50
+
+    if [ $choice = y ]; then
+        echo
+        echo "# aws cloudformation describe-stack-resources --stack-name StandardRoles \\"
+        echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
+        echo ">                                             --profile $profile --region $region --output table"
+        aws cloudformation describe-stack-resources --stack-name StandardRoles \
+                                                    --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
+                                                    --profile $profile --region $region --output table 2> /dev/null
 
         next
     fi

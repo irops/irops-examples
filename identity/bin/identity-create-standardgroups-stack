@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script creates the IAM StandardGroups Stack in the Identity Account.
+# This script creates the StandardGroups Stack in the Identity Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -251,7 +251,7 @@ if [ -n $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Identity-IAM-StandardGroups.json' \\"
+    echo "            --exclude '*' --include 'Identity-StandardGroups.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ -n $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Identity-IAM-StandardGroups.json' \\"
+    echo ">             --exclude '*' --include 'Identity-StandardGroups.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Identity-IAM-StandardGroups.json' \
+                --exclude '*' --include 'Identity-StandardGroups.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -288,13 +288,13 @@ echo "Commands:"
 echo
 if [ -n $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name StandardGroups \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardGroups.json \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name StandardGroups \\"
-    echo "                                --template-body file://$templatesdir/Identity-IAM-StandardGroups.json \\"
+    echo "                                --template-body file://$templatesdir/Identity-StandardGroups.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -316,23 +316,23 @@ else
         echo
         if [ -n $templates-bucket ]; then
             echo "# aws cloudformation create-stack --stack-name StandardGroups \\"
-            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardGroups.json \\"
+            echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \\"
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardGroups \
-                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardGroups.json \
+                                            --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name StandardGroups \\"
-            echo ">                                 --template-body file://$templatesdir/Identity-IAM-StandardGroups.json \\"
+            echo ">                                 --template-body file://$templatesdir/Identity-StandardGroups.json \\"
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardGroups \
-                                            --template-body file://$templatesdir/Identity-IAM-StandardGroups.json \
+                                            --template-body file://$templatesdir/Identity-StandardGroups.json \
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table

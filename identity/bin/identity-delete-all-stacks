@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script updates All IAM Stacks in the Identity Account in the correct order.
+# This script deletes All Stacks in the Identity Account in the correct order.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -195,10 +195,14 @@ unset EC2_CERT
 
 start=$(date +%s)
 
-$IROPS_HOME/identity/bin/identity-update-iam-standardmanagedpolicies-stack $options
-$IROPS_HOME/identity/bin/identity-update-iam-standardgroups-stack $options
-$IROPS_HOME/identity/bin/identity-update-iam-standardusers-stack $options
-$IROPS_HOME/identity/bin/identity-update-iam-standardroles-stack $options
+$IROPS_HOME/identity/bin/identity-delete-standardroles-stack $options
+
+$IROPS_HOME/identity/bin/identity-delete-customusers-stack $options
+$IROPS_HOME/identity/bin/identity-delete-standardusers-stack $options
+
+$IROPS_HOME/identity/bin/identity-delete-standardgroups-stack $options
+
+$IROPS_HOME/identity/bin/identity-delete-standardmanagedpolicies-stack $options
 
 end=$(date +%s)
 

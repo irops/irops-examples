@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Identity-IAM-StandardRoles Template. This creates Standard IAM Roles within the Identity Account. Roles will usually be created within the Application Template where they are used, instead of globally in this Template. So, this Template contains only a trivial Role used as an example of the technique.",
+  "Description" : "Identity-StandardRoles Template. This creates Standard IAM Roles within the Identity Account. Roles will usually be created within the Application Template where they are used, instead of globally in this Template. So, this Template contains only a trivial Role used as an example of the technique.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
@@ -31,10 +31,10 @@
   },
 
   "Resources" : {
-    "ReaderRole" : {
+    "UserRole" : {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "Reader",
+        "RoleName": "User",
         "Path" : "/",
         "AssumeRolePolicyDocument" : {
           "Version" : "2012-10-17",
@@ -50,10 +50,10 @@
   },
 
   "Outputs" : {
-    "ReaderRole" : {
-      "Description" : "The ReaderRole Name",
-      "Value" :  { "Ref" : "ReaderRole" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ReaderRole" }}
+    "UserRole" : {
+      "Description" : "The UserRole Name",
+      "Value" :  { "Ref" : "UserRole" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-UserRole" }}
     }
   }
 }

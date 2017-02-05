@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Identity-IAM-StandardGroups Template. This creates Standard IAM Groups within the Identity Account.",
+  "Description" : "Identity-StandardGroups Template. This creates Standard IAM Groups within the Identity Account.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
@@ -31,10 +31,10 @@
   },
 
   "Resources" : {
-    "Administrators2Group" : {
+    "AdministratorsGroup" : {
       "Type": "AWS::IAM::Group",
       "Properties": {
-        "GroupName": "Administrators2",
+        "GroupName": "Administrators",
         "Path" : "/",
         "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/AdministratorAccess" ]
       }
@@ -76,19 +76,19 @@
       }
     },
 
-    "PowerUsersGroup" : {
+    "DevelopersGroup" : {
       "Type": "AWS::IAM::Group",
       "Properties": {
-        "GroupName": "PowerUsers",
+        "GroupName": "Developers",
         "Path" : "/",
         "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/PowerUserAccess" ]
       }
     },
 
-    "ReadersGroup" : {
+    "UsersGroup" : {
       "Type": "AWS::IAM::Group",
       "Properties": {
-        "GroupName": "Readers",
+        "GroupName": "Users",
         "Path" : "/",
         "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/ReadOnlyAccess" ]
       }
@@ -96,10 +96,10 @@
   },
 
   "Outputs" : {
-    "Administrators2Group" : {
-      "Description" : "The Administrators2Group Name",
-      "Value" :  { "Ref" : "Administrators2Group" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-Administrators2Group" }}
+    "AdministratorsGroup" : {
+      "Description" : "The AdministratorsGroup Name",
+      "Value" :  { "Ref" : "AdministratorsGroup" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorsGroup" }}
     },
 
     "AdministratorsWithoutBillingGroup" : {
@@ -125,16 +125,16 @@
       "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DatabaseAdministratorsGroup" }}
     },
 
-    "PowerUsersGroup" : {
-      "Description" : "The PowerUsersGroup Name",
-      "Value" :  { "Ref" : "PowerUsersGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-PowerUsersGroup" }}
+    "DevelopersGroup" : {
+      "Description" : "The DevelopersGroup Name",
+      "Value" :  { "Ref" : "DevelopersGroup" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DevelopersGroup" }}
     },
 
-    "ReadersGroup" : {
-      "Description" : "The ReadersGroup Name",
-      "Value" :  { "Ref" : "ReadersGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ReadersGroup" }}
+    "UsersGroup" : {
+      "Description" : "The UsersGroup Name",
+      "Value" :  { "Ref" : "UsersGroup" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-UsersGroup" }}
     }
   }
 }

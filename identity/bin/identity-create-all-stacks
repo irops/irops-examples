@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script creates All IAM Stacks in the Identity Account in the correct order.
+# This script creates All Stacks in the Identity Account in the correct order.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -195,10 +195,14 @@ unset EC2_CERT
 
 start=$(date +%s)
 
-$IROPS_HOME/identity/bin/identity-create-iam-standardmanagedpolicies-stack $options
-$IROPS_HOME/identity/bin/identity-create-iam-standardgroups-stack $options
-$IROPS_HOME/identity/bin/identity-create-iam-standardusers-stack $options
-$IROPS_HOME/identity/bin/identity-create-iam-standardroles-stack $options
+$IROPS_HOME/identity/bin/identity-create-standardmanagedpolicies-stack $options
+
+$IROPS_HOME/identity/bin/identity-create-standardgroups-stack $options
+
+$IROPS_HOME/identity/bin/identity-create-standardusers-stack $options
+$IROPS_HOME/identity/bin/identity-create-customusers-stack $options
+
+$IROPS_HOME/identity/bin/identity-create-standardroles-stack $options
 
 end=$(date +%s)
 
