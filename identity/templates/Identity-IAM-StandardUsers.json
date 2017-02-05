@@ -1,0 +1,117 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Identity-IAM-StandardUsers Template. This creates Standard IAM Users within the Identity Account.",
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Stack Dependencies" },
+          "Parameters" : [ "StandardManagedPoliciesStackName", "StandardGroupsStackName" ]
+        }
+      ],
+
+      "ParameterLabels" : {
+        "StandardManagedPoliciesStackName" : { "default" : "Standard ManagedPolicies Stack Name" },
+        "StandardGroupsStackName" : { "default" : "Standard Groups Stack Name" }
+      }
+    }
+  },
+
+  "Parameters" : {
+    "StandardManagedPoliciesStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing Standard ManagedPolicies.",
+      "Type" : "String",
+      "MinLength" : 2,
+      "MaxLength" : 64,
+      "Default" : "StandardManagedPolicies",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "StandardGroupsStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing Standard Groups.",
+      "Type" : "String",
+      "MinLength" : 2,
+      "MaxLength" : 64,
+      "Default" : "StandardGroups",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    }
+  },
+
+  "Resources" : {
+    "mcrawford2User" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "mcrawford2",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
+      }
+    },
+
+    "kmccutchen2User" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "kmccutchen2",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
+      }
+    },
+
+    "gveazey2User" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "gveazey2",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-Administrators2Group" }} ]
+      }
+    },
+
+    "networkadminUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "networkadmin",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-NetworkAdministratorsGroup" }} ]
+      }
+    },
+
+    "systemadminUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "systemadmin",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-SystemAdministratorsGroup" }} ]
+      }
+    },
+
+    "databaseadminUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "databaseadmin",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-DatabaseAdministratorGroup" }} ]
+      }
+    },
+
+    "poweruserUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "poweruser",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-PowerUsersGroup" }} ]
+      }
+    },
+
+    "readerUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "reader",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-ReadersGroup" }} ]
+      }
+    }
+  }
+}
