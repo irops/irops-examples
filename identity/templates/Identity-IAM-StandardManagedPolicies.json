@@ -12,13 +12,13 @@
         "PolicyDocument" : {
           "Version":"2012-10-17",
           "Statement" : [{
-            "Sid" : "Allow Administrator Access",
+            "Sid" : "AllowAdministratorAccess",
             "Effect": "Allow",
             "Action": "*",
             "Resource": "*"
           },
           {
-            "Sid" : "Deny Billing Access",
+            "Sid" : "DenyBillingAccess",
             "Effect": "Deny",
             "Action": [
                 "aws-portal:*Billing",

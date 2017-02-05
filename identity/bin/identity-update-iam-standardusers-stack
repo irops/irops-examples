@@ -162,9 +162,9 @@ if [ -z $region ]; then
 else
     case $region in
       us-east-1)
-        aws_s3_domain=s3.amazonaws.com;;
+        s3_domain=s3.amazonaws.com;;
       us-east-2|us-west-1|us-west-2|ca-central-1|sa-east-1|eu-west-1|eu-west-2|eu-central-1|ap-northeast-1|ap-northeast-2|ap-south-1|ap-southeast-1|ap-southeast-2)
-        aws_s3_domain=s3-$region.amazonaws.com;;
+        s3_domain=s3-$region.amazonaws.com;;
     *)
         echo "-r $region invalid: Please specify a valid region"
         exit 21;;
@@ -294,17 +294,17 @@ echo "Commands:"
 echo
 if [ -n $templatesbucket ]; then
     echo "aws cloudformation update-stack --stack-name StandardUsers \\"
-    echo "                                --template-url s3://$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
-    echo "                                --capabilities CAPABILITY_IAM \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation update-stack --stack-name StandardUsers \\"
     echo "                                --template-body file://$templatesdir/Identity-IAM-StandardUsers.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
-    echo "                                --capabilities CAPABILITY_IAM \\"
+    echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -314,29 +314,29 @@ if [ $choice = y ]; then
     echo
     if [ -n $templates-bucket ]; then
         echo "# aws cloudformation update-stack --stack-name StandardUsers \\"
-        echo ">                                 --template-url s3://$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \\"
         echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
         echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
-        echo ">                                 --capabilities CAPABILITY_IAM \\"
+        echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name StandardUsers \
-                                        --template-url s3://$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-IAM-StandardUsers.json \
                                         --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                                      ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
-                                        --capabilities CAPABILITY_IAM \
+                                        --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table
     else
         echo "# aws cloudformation update-stack --stack-name StandardUsers \\"
         echo ">                                 --template-body file://$templatesdir/Identity-IAM-StandardUsers.json \\"
         echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
         echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
-        echo ">                                 --capabilities CAPABILITY_IAM \\"
+        echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name StandardUsers \
                                         --template-body file://$templatesdir/Identity-IAM-StandardUsers.json \
                                         --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                                      ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
-                                        --capabilities CAPABILITY_IAM \
+                                        --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table
     fi
 

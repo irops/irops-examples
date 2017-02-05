@@ -153,9 +153,9 @@ if [ -z $region ]; then
 else
     case $region in
       us-east-1)
-        aws_s3_domain=s3.amazonaws.com;;
+        s3_domain=s3.amazonaws.com;;
       us-east-2|us-west-1|us-west-2|ca-central-1|sa-east-1|eu-west-1|eu-west-2|eu-central-1|ap-northeast-1|ap-northeast-2|ap-south-1|ap-southeast-1|ap-southeast-2)
-        aws_s3_domain=s3-$region.amazonaws.com;;
+        s3_domain=s3-$region.amazonaws.com;;
     *)
         echo "-r $region invalid: Please specify a valid region"
         exit 21;;
@@ -305,7 +305,7 @@ else
         echo ">                                    --profile $profile --region $region --output table"
         aws cloudformation describe-stacks --stack-name StandardUsers \
                                            --query 'Stacks[].[StackName,StackStatus]' \
-                                           --profile $profile --region $region --output table
+                                           --profile $profile --region $region --output table 2> /dev/null
         pause
 
         attempt=0

@@ -92,7 +92,7 @@
       "Properties": {
         "UserName": "databaseadmin",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-DatabaseAdministratorGroup" }} ]
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-DatabaseAdministratorsGroup" }} ]
       }
     },
 
