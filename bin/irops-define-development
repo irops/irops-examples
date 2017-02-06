@@ -9,29 +9,27 @@ export IROPS_HOME=~/Workspaces/irops/irops-examples
 export COMPANY_CODE=demo
 export COMPANY_NAME="Demo"
 
-# Location
-export LOCATION_CODE=uw2
-export LOCATION_NAME="US-West-2"
+# System
+export SYSTEM_CODE=irops
+export SYSTEM_NAME="IROPS"
 
 # Environment
 export ENVIRONMENT_CODE=d
 export ENVIRONMENT_NAME="Development"
+export ENVIRONMENT_NETWORK=80           # Assumes use of Environment-VPC-18.json Template
 
-# System
-export SYSTEM_CODE=irops
-export SYSTEM_NAME="IROPS"
-export SYSTEM_VPC_NETWORK=84
-export SYSTEM_VPC_SUBNET=0
+# Core
+export CORE_CODE=c
+export CORE_NAME="Core"
+export CORE_NETWORK=240
 
-# Application
-export APPLICATION_CODE=eng
-export APPLICATION_NAME="Engine"
-export APPLICATION_INSTANCE_TYPE="t2.nano"
-export APPLICATION_INSTANCE_MIN="2"
-export APPLICATION_INSTANCE_MAX="4"
+# Build
+export BUILD_CODE=b
+export BUIDL_NAME="Build"
+export BUILD_NETWORK=244
 
 # Region
-export AWS_DEFAULT_REGION=us-west-1
+export AWS_DEFAULT_REGION=us-west-2
 
 # Account
 export AWS_ACCOUNT_ALIAS=irops

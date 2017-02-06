@@ -1,0 +1,195 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Environment-NetworkAcls Template. This adds NetworkAcls to an existing Environment VPC within an Environment Account. This Template is optional, and can be added (or removed) at any time to apply an additional layer of network security. This initially simply replicates the Default NetworkAcl, so we have a Template from which we can iterate to tighten security.",
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Stack Dependencies" },
+          "Parameters" : [ "EnvironmentVPCStackName" ]
+        },
+        {
+          "Label" : { "default" : "Resource Identification & Tagging" },
+          "Parameters" : [ "EnvironmentName" ]
+        }
+      ],
+
+      "ParameterLabels" : {
+        "EnvironmentVPCStackName" : { "default" : "Environment VPC Stack Name" },
+        "EnvironmentName" : { "default" : "Environment Name" }
+      }
+    }
+  },
+
+  "Parameters" : {
+    "EnvironmentVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Environment VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "Production-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "EnvironmentName" : {
+      "Description" : "Name of the Environment associated with Resources created by this Stack.",
+      "Type" : "String",
+      "Default" : "Production",
+      "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
+      "ConstraintDescription" : "must be one of the following: Production, Staging, QA, Development."
+    }
+  },
+
+  "Resources" : {
+    "PublicNetworkAcl" : {
+      "Type" : "AWS::EC2::NetworkAcl",
+      "Properties" : {
+        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-VPC" } },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicNetworkAcl" } }
+        ]
+      }
+    },
+
+    "PublicNetworkAclEntryInbound100" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" },
+        "RuleNumber" : "100",
+        "Protocol" : "-1",
+        "Egress" : "false",
+        "CidrBlock" : "0.0.0.0/0",
+        "RuleAction" : "allow"
+      }
+    },
+
+    "PublicNetworkAclEntryOutbound100" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" },
+        "RuleNumber" : "100",
+        "Protocol" : "-1",
+        "Egress" : "true",
+        "CidrBlock" : "0.0.0.0/0",
+        "RuleAction" : "allow"
+      }
+    },
+
+    "Pub1SubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Pub1SubnetA" } },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    },
+
+    "Pub1SubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Pub1SubnetB" } },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    },
+
+    "Web1SubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Web1SubnetA" } },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    },
+
+    "Web1SubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Web1SubnetB" } },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    },
+
+    "PrivateNetworkAcl" : {
+      "Type" : "AWS::EC2::NetworkAcl",
+      "Properties" : {
+        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-VPC" } },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateNetworkAcl" } }
+        ]
+      }
+    },
+
+    "PrivateNetworkAclEntryInbound100" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" },
+        "RuleNumber" : "100",
+        "Protocol" : "-1",
+        "Egress" : "false",
+        "CidrBlock" : "0.0.0.0/0",
+        "RuleAction" : "allow"
+      }
+    },
+
+    "PrivateNetworkAclEntryOutbound100" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" },
+        "RuleNumber" : "100",
+        "Protocol" : "-1",
+        "Egress" : "true",
+        "CidrBlock" : "0.0.0.0/0",
+        "RuleAction" : "allow"
+      }
+    },
+
+    "App1SubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-App1SubnetA" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "App1SubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-App1SubnetB" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "Dat1SubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Dat1SubnetA" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "Dat1SubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Dat1SubnetB" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "Que1SubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Que1SubnetA" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "Que1SubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-Que1SubnetB" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Defines the IROPS Environment Variables for the Staging Environment
+# Defines the IROPS Environment Variables for the QA Environment
 
 # IROPS
 export IROPS_HOME=~/Workspaces/irops/irops-examples
@@ -14,8 +14,8 @@ export SYSTEM_CODE=irops
 export SYSTEM_NAME="IROPS"
 
 # Environment
-export ENVIRONMENT_CODE=s
-export ENVIRONMENT_NAME="Staging"
+export ENVIRONMENT_CODE=q
+export ENVIRONMENT_NAME="QA"
 export ENVIRONMENT_NETWORK=80           # Assumes use of Environment-VPC-18.json Template
 
 # Core
