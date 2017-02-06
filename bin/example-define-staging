@@ -35,21 +35,23 @@ export APPLICATION_INSTANCE_MAX="4"
 export AWS_DEFAULT_REGION=us-west-2
 
 # Account
-export AWS_ACCOUNT_NAME=irops
+export AWS_ACCOUNT_ALIAS=irops
 export AWS_ACCOUNT_NUMBER=624812452220
 
 # User
 export AWS_USER_NAME=$USER
 
 # Credentials
-export AWS_DEFAULT_PROFILE=$AWS_ACCOUNT_NAME-$AWS_USER_NAME
+export AWS_DEFAULT_PROFILE=$AWS_ACCOUNT_ALIAS-$AWS_USER_NAME
 
 # Keys
 export AWS_SSH_KEY_ID=example
 export AWS_SSH_KEY_FILE=${HOME}/.ssh/irops_${AWS_SSH_KEY_ID}_id_rsa
 
 # Notification
-unset SNS_ADMINISTRATOR_TOPIC
+export SNS_ADMINISTRATOR_TOPIC="arn:aws:sns:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_NUMBER}:Administrators"
+export SNS_EVENTS_TOPIC="arn:aws:sns:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_NUMBER}:Events"
+export SNS_ALARMS_TOPIC="arn:aws:sns:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_NUMBER}:Alarms"
 
 # Owner
 export OWNER_EMAIL=$USER@hpe.com

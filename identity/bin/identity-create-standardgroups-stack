@@ -35,7 +35,7 @@ interactive=1
 speed=100
 verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
-account=${AWS_ACCOUNT_NAME:-irops}
+account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
@@ -238,7 +238,7 @@ fi
 
 
 ((++step))
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     clear
     echo
     echo "============================================================"
@@ -276,7 +276,7 @@ echo
 echo "============================================================"
 echo
 echo "$(printf '%2d' $step). Create the Stack"
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     echo "    - Referencing the template as an S3 URL"
 else
     echo "    - Referencing the template as a local File"
@@ -286,16 +286,26 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name StandardGroups \\"
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \\"
+    echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name StandardGroups \\"
     echo "                                --template-body file://$templatesdir/Identity-StandardGroups.json \\"
+    echo "                                --stack-policy-body file://$templatesdir/Identity-StandardGroups-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 fi
@@ -314,26 +324,46 @@ else
 
     if [ $choice = y ]; then
         echo
-        if [ -n $templates-bucket ]; then
+        if [ ! -z $templatesbucket ]; then
             echo "# aws cloudformation create-stack --stack-name StandardGroups \\"
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \\"
+            echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardGroups \
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups.json \
+                                            --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardGroups-StackPolicy.json \
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name StandardGroups \\"
             echo ">                                 --template-body file://$templatesdir/Identity-StandardGroups.json \\"
+            echo ">                                 --stack-policy-body file://$templatesdir/Identity-StandardGroups-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardGroups \
                                             --template-body file://$templatesdir/Identity-StandardGroups.json \
+                                            --stack-policy-body file://$templatesdir/Identity-StandardGroups-StackPolicy.json \
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table
         fi
