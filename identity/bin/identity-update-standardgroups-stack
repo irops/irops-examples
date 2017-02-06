@@ -249,7 +249,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "============================================================"
     echo
-    echo "$(printf '%2d' $step). Sync Template to ($templatesbucket) Bucket"
+    echo "$(printf '%2d' $step). Sync Template and Policy to ($templatesbucket) Bucket"
     echo
     echo "============================================================"
     echo

@@ -35,7 +35,7 @@ interactive=1
 speed=100
 verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
-account=${AWS_ACCOUNT_NAME:-irops}
+account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
@@ -238,12 +238,12 @@ fi
 
 
 ((++step))
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     clear
     echo
     echo "============================================================"
     echo
-    echo "$(printf '%2d' $step). Sync Template to ($templatesbucket) Bucket"
+    echo "$(printf '%2d' $step). Sync Template and Policy to ($templatesbucket) Bucket"
     echo
     echo "============================================================"
     echo
@@ -251,7 +251,7 @@ if [ -n $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-CustomSubscriptions.json' \\"
+    echo "            --exclude '*' --include 'Core-CustomSubscriptions*.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ -n $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-CustomSubscriptions.json' \\"
+    echo ">             --exclude '*' --include 'Core-CustomSubscriptions*.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-CustomSubscriptions.json' \
+                --exclude '*' --include 'Core-CustomSubscriptions*.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -276,7 +276,7 @@ echo
 echo "============================================================"
 echo
 echo "$(printf '%2d' $step). Create the Stack"
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     echo "    - Referencing the template as an S3 URL"
 else
     echo "    - Referencing the template as a local File"
@@ -286,13 +286,23 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-if [ -n $templatesbucket ]; then
+if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name CustomSubscriptions \\"
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
+    echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name CustomSubscriptions \\"
     echo "                                --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
+    echo "                                --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -310,19 +320,39 @@ else
 
     if [ $choice = y ]; then
         echo
-        if [ -n $templates-bucket ]; then
+        if [ ! -z $templatesbucket ]; then
             echo "# aws cloudformation create-stack --stack-name CustomSubscriptions \\"
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
+            echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name CustomSubscriptions \
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \
+                                            --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name CustomSubscriptions \\"
             echo ">                                 --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
+            echo ">                                 --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name CustomSubscriptions \
                                             --template-body file://$templatesdir/Core-CustomSubscriptions.json \
+                                            --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         fi
 

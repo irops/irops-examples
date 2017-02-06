@@ -35,7 +35,7 @@ interactive=1
 speed=100
 verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
-account=${AWS_ACCOUNT_NAME:-irops}
+account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
@@ -243,7 +243,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "============================================================"
     echo
-    echo "$(printf '%2d' $step). Sync Template to ($templatesbucket) Bucket"
+    echo "$(printf '%2d' $step). Sync Template and Policy to ($templatesbucket) Bucket"
     echo
     echo "============================================================"
     echo
@@ -251,7 +251,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-StandardBuckets.json' \\"
+    echo "            --exclude '*' --include 'Core-StandardBuckets*.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-StandardBuckets.json' \\"
+    echo ">             --exclude '*' --include 'Core-StandardBuckets*.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-StandardBuckets.json' \
+                --exclude '*' --include 'Core-StandardBuckets*.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -289,12 +289,22 @@ echo
 if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name StandardBuckets \\"
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \\"
-    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+    echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name StandardBuckets \\"
     echo "                                --template-body file://$templatesdir/Core-StandardBuckets.json \\"
-    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+    echo "                                --stack-policy-body file://$templatesdir/Core-StandardBuckets-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \\"
+    echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
+    echo "                                       Key=System,Value=$SYSTEM_NAME \\"
+    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 fi
 
@@ -315,20 +325,40 @@ else
         if [ ! -z $templatesbucket ]; then
             echo "# aws cloudformation create-stack --stack-name StandardBuckets \\"
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \\"
-            echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+            echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets-StackPolicy.json \\"
+            echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardBuckets \
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets.json \
-                                            --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
+                                            --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardBuckets-StackPolicy.json \
+                                            --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name StandardBuckets \\"
             echo ">                                 --template-body file://$templatesdir/Core-StandardBuckets.json \\"
-            echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \\"
+            echo ">                                 --stack-policy-body file://$templatesdir/Core-StandardBuckets-StackPolicy.json \\"
+            echo ">                                 --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \\"
+            echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
+            echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
+            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name StandardBuckets \
                                             --template-body file://$templatesdir/Core-StandardBuckets.json \
-                                            --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_NAME \
+                                            --stack-policy-body file://$templatesdir/Core-StandardBuckets-StackPolicy.json \
+                                            --parameters ParameterKey=AccountAlias,ParameterValue=$AWS_ACCOUNT_ALIAS \
+                                            --tags Key=Company,Value=$COMPANY_NAME \
+                                                   Key=System,Value=$SYSTEM_NAME \
+                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         fi
 
