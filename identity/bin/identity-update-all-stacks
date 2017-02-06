@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script deletes All Stacks in the Core Account in the correct order.
+# This script updates All Stacks in the Identity Account in the correct order.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -195,12 +195,14 @@ unset EC2_CERT
 
 start=$(date +%s)
 
-$IROPS_HOME/core/bin/core-delete-standardbuckets-stack $options
+$IROPS_HOME/identity/bin/identity-update-standardmanagedpolicies-stack $options
 
-$IROPS_HOME/core/bin/core-delete-customsubscriptions-stack $options
-$IROPS_HOME/core/bin/core-delete-standardsubscriptions-stack $options
+$IROPS_HOME/identity/bin/identity-update-standardgroups-stack $options
 
-$IROPS_HOME/core/bin/core-delete-standardtopics-stack $options
+$IROPS_HOME/identity/bin/identity-update-standardusers-stack $options
+$IROPS_HOME/identity/bin/identity-update-customusers-stack $options
+
+$IROPS_HOME/identity/bin/identity-update-standardroles-stack $options
 
 end=$(date +%s)
 

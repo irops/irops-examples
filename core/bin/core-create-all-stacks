@@ -29,7 +29,7 @@ interactive=1
 speed=100
 verbose=0
 region=${AWS_DEFAULT_REGION:-us-west-2}
-account=${AWS_ACCOUNT_NAME:-irops}
+account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 
@@ -133,7 +133,7 @@ while getopts Isfvr:a:u:? arg; do
     I)  interactive=0; options="$options -I";;
     s)  ((speed < speed_max)) && ((speed=speed+25)); options="$options -s";;
     f)  ((speed > 0)) && ((speed=speed-25)); options="$options -f";;
-    d)  domain="$OPTARG"; options="$options -d $OPTARG";;
+    v)  verbose=1; options="$options -v";;
     r)  region="$OPTARG"; options="$options -r $OPTARG";;
     a)  account="$OPTARG"; options="$options -a $OPTARG";;
     u)  user="$OPTARG"; options="$options -u $OPTARG";;
@@ -195,9 +195,12 @@ unset EC2_CERT
 
 start=$(date +%s)
 
-$IROPS_HOME/core/bin/core-create-sns-standardtopics-stack $options
-$IROPS_HOME/core/bin/core-create-sns-standardsubscriptions-stack $options
-$IROPS_HOME/core/bin/core-create-s3-standardbuckets-stack $options
+$IROPS_HOME/core/bin/core-create-standardtopics-stack $options
+
+$IROPS_HOME/core/bin/core-create-standardsubscriptions-stack $options
+$IROPS_HOME/core/bin/core-create-customsubscriptions-stack $options
+
+$IROPS_HOME/core/bin/core-create-standardbuckets-stack $options
 
 end=$(date +%s)
 
