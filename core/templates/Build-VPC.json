@@ -100,7 +100,7 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "BuildNetworkNetwork" }]}]},
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "BuildNetwork" }]}]},
                                               { "Fn::FindInMap" : [ "SubnetMap", "Public", "ZoneA" ]}]]},
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "true",

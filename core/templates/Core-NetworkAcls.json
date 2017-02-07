@@ -53,7 +53,7 @@
       "Properties" : {
         "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-VPC" } },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicNetworkAcl" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-PublicNetworkAcl" } }
         ]
       }
     },
@@ -121,7 +121,7 @@
       "Properties" : {
         "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-VPC" } },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateNetworkAcl" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-PrivateNetworkAcl" } }
         ]
       }
     },
