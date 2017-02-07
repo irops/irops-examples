@@ -1,49 +1,40 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Environment-NetworkAcls Template. This adds NetworkAcls to an existing Environment VPC within an Environment Account. This Template is optional, and can be added (or removed) at any time to apply an additional layer of network security. This initially simply replicates the Default NetworkAcl, so we have a Template from which we can iterate to tighten security.",
+  "Description" : "Core-NetworkAcls Template. This adds NetworkAcls to an existing Core VPC within the Core Account. This Template is optional, and can be added (or removed) at any time to apply an additional layer of network security. This initially simply replicates the Default NetworkAcl, so we have a Template from which we can iterate to tighten security.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
       "ParameterGroups" : [
         {
           "Label" : { "default" : "Stack Dependencies" },
-          "Parameters" : [ "EnvironmentVPCStackName" ]
+          "Parameters" : [ "CoreVPCStackName" ]
         },
         {
           "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "EnvironmentName", "EnvironmentMultiZoneSubnets" ]
+          "Parameters" : [ "CoreMultiZoneSubnets" ]
         }
       ],
 
       "ParameterLabels" : {
-        "EnvironmentVPCStackName" : { "default" : "Environment VPC Stack Name" },
-        "EnvironmentName" : { "default" : "Environment Name" },
-        "EnvironmentMultiZoneSubnets" : { "default" : "Environment Multi-Zone Subnets" }
+        "CoreVPCStackName" : { "default" : "Core VPC Stack Name" },
+        "CoreMultiZoneSubnets" : { "default" : "Core Multi-Zone Subnets" }
       }
     }
   },
 
   "Parameters" : {
-    "EnvironmentVPCStackName" : {
-      "Description" : "Name of the CloudFormation Stack containing the Environment VPC.",
+    "CoreVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Core VPC.",
       "Type" : "String",
       "MinLength" : 8,
       "MaxLength" : 64,
-      "Default" : "Production-VPC",
+      "Default" : "Core-VPC",
       "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
       "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
     },
 
-    "EnvironmentName" : {
-      "Description" : "Name of the Environment associated with the Stack.",
-      "Type" : "String",
-      "Default" : "Production",
-      "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
-      "ConstraintDescription" : "must be one of the following: Production, Staging, QA, Development."
-    },
-
-    "EnvironmentMultiZoneSubnets" : {
+    "CoreMultiZoneSubnets" : {
       "Description" : "Use Subnets in multiple Availability Zones",
       "Type" : "String",
       "Default" : "true",
@@ -53,14 +44,14 @@
   },
 
   "Conditions" : {
-    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "EnvironmentMultiZoneSubnets" }, "true" ]}
+    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "CoreMultiZoneSubnets" }, "true" ]}
   },
 
   "Resources" : {
     "PublicNetworkAcl" : {
       "Type" : "AWS::EC2::NetworkAcl",
       "Properties" : {
-        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-VPC" } },
+        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-VPC" } },
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicNetworkAcl" } }
         ]
@@ -94,7 +85,7 @@
     "PublicSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-PublicSubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-PublicSubnetA" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       }
     },
@@ -102,7 +93,7 @@
     "PublicSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-PublicSubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-PublicSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"
@@ -111,7 +102,7 @@
     "WebSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-WebSubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-WebSubnetA" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       }
     },
@@ -119,7 +110,7 @@
     "WebSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-WebSubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-WebSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"
@@ -128,7 +119,7 @@
     "PrivateNetworkAcl" : {
       "Type" : "AWS::EC2::NetworkAcl",
       "Properties" : {
-        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-VPC" } },
+        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-VPC" } },
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateNetworkAcl" } }
         ]
@@ -162,7 +153,7 @@
     "ApplicationSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-ApplicationSubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ApplicationSubnetA" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       }
     },
@@ -170,7 +161,7 @@
     "ApplicationSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-ApplicationSubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ApplicationSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"
@@ -179,7 +170,7 @@
     "DatabaseSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-DatabaseSubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DatabaseSubnetA" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       }
     },
@@ -187,41 +178,75 @@
     "DatabaseSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-DatabaseSubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DatabaseSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"
     },
 
-    "QueueSubnetANetworkAclAssociation" : {
+    "ProductionQueueSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-QueueSubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ProductionQueueSubnetA" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       }
     },
 
-    "QueueSubnetBNetworkAclAssociation" : {
+    "ProductionQueueSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-QueueSubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ProductionQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"
     },
 
-    "IdentitySubnetANetworkAclAssociation" : {
+    "StagingQueueSubnetANetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-IdentitySubnetA" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-StagingQueueSubnetA" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       }
     },
 
-    "IdentitySubnetBNetworkAclAssociation" : {
+    "StagingQueueSubnetBNetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-IdentitySubnetB" } },
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-StagingQueueSubnetB" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      },
+      "Condition" : "UseMultiZoneSubnets"
+    },
+
+    "QAQueueSubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-QAQueueSubnetA" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "QAQueueSubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-QAQueueSubnetB" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      },
+      "Condition" : "UseMultiZoneSubnets"
+    },
+
+    "DevelopmentQueueSubnetANetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DevelopmentQueueSubnetA" } },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "DevelopmentQueueSubnetBNetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DevelopmentQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       },
       "Condition" : "UseMultiZoneSubnets"

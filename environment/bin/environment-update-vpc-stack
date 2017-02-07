@@ -28,7 +28,6 @@ update_attempts=20
 interactive=1
 speed=100
 verbose=0
-type=18
 region=${AWS_DEFAULT_REGION:-us-west-2}
 account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
@@ -40,13 +39,12 @@ templatespath=/environment
 #  2. Define functions
 
 usage () {
-    echo "Usage: ${BASH_SOURCE##*/} [-I [-s | -f]] [-v] [-t type]"
+    echo "Usage: ${BASH_SOURCE##*/} [-I [-s | -f]] [-v]"
     echo "              [-r region ] [-a account] [-u user]"
     echo "  -I          non-interactive"
     echo "  -s          slower: increase pauses by 25%"
     echo "  -f          faster: reduce pauses by 25%"
     echo "  -v          verbose"
-    echo "  -t type     VPC Type (default: $type)"
     echo "  -r region   Region (default: $region)"
     echo "  -a account  Account (default: $account)"
     echo "  -u user     User (default: $user)"
@@ -132,13 +130,12 @@ next() {
 
 #  3. Parse command line options
 
-while getopts Isfvt:r:a:u:? arg; do
+while getopts Isfvr:a:u:? arg; do
     case $arg in
     I)  interactive=0;;
     s)  ((speed < speed_max)) && ((speed=speed+25));;
     f)  ((speed > 0)) && ((speed=speed-25));;
     v)  verbose=1;;
-    t)  type="$OPTARG";;
     r)  region="$OPTARG";;
     a)  account="$OPTARG";;
     u)  user="$OPTARG";;
@@ -151,20 +148,6 @@ shift $(($OPTIND - 1))
 
 
 #  4. Validate environment
-
-if [ -z $type ]; then
-    echo "-t type missing!"
-    echo "Could not automatically determine VPC type, and it was not specified as a parameter"
-    exit 10
-else
-    case $type in
-      18|16)
-        ;;
-    *)
-        echo "-t $type invalid: Please specify one of these values: 18, 16"
-        exit 11;;
-    esac
-fi
 
 if [ -z $region ]; then
     echo "-r region missing!"
@@ -211,7 +194,6 @@ if ! aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-VPC \
     echo "Unable to update - $ENVIRONMENT_NAME-VPC Stack does not exist!"
     exit 2
 fi
-
 
 # Prevent certain environment variables from breaking commands
 unset AWS_DEFAULT_PROFILE
@@ -306,10 +288,12 @@ echo "Commands:"
 echo
 if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-$type.json \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
-    echo "                                --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+    echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+    echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
+    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+    echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -318,10 +302,12 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \\"
-    echo "                                --template-body file://$templatesdir/Environment-VPC-$type.json \\"
+    echo "                                --template-body file://$templatesdir/Environment-VPC.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
-    echo "                                --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+    echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+    echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
+    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+    echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -336,10 +322,12 @@ if [ $choice = y ]; then
     echo
     if [ ! -z $templatesbucket ]; then
         echo "# aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-$type.json \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
-        echo ">                                 --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-        echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+        echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+        echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
+        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -347,10 +335,12 @@ if [ $choice = y ]; then
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \
-                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-$type.json \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC.json \
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \
-                                        --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                     ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
+                                        --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
+                                                     ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
+                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
+                                                     ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -359,10 +349,12 @@ if [ $choice = y ]; then
                                         --profile $profile --region $region --output table
     else
         echo "# aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \\"
-        echo ">                                 --template-body file://$templatesdir/Environment-VPC-$type.json \\"
+        echo ">                                 --template-body file://$templatesdir/Environment-VPC.json \\"
         echo ">                                 --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
-        echo ">                                 --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-        echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+        echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
+        echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
+        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -370,10 +362,12 @@ if [ $choice = y ]; then
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-VPC \
-                                        --template-body file://$templatesdir/Environment-VPC-$type.json \
+                                        --template-body file://$templatesdir/Environment-VPC.json \
                                         --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \
-                                        --parameters ParameterKey=EnvironmentVPCNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                     ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
+                                        --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
+                                                     ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
+                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
+                                                     ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=$ENVIRONMENT_NAME \

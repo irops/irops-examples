@@ -16,17 +16,23 @@ export SYSTEM_NAME="IROPS"
 # Environment
 export ENVIRONMENT_CODE=p
 export ENVIRONMENT_NAME="Production"
-export ENVIRONMENT_NETWORK=80           # This works with both the Environment-VPC-18.json or Environment-VPC-16.json Templates
+export ENVIRONMENT_NETWORK=10.40.0.0/16
+export ENVIRONMENT_HA_SUBNETS=true
+export ENVIRONMENT_HA_NAT_GATEWAYS=true
 
 # Core
 export CORE_CODE=c
 export CORE_NAME="Core"
-export CORE_NETWORK=240
+export CORE_NETWORK=10.46.0.0/16
+export CORE_HA_SUBNETS=true
+export CORE_HA_NAT_GATEWAYS=false
 
 # Build
 export BUILD_CODE=b
 export BUIDL_NAME="Build"
-export BUILD_NETWORK=244
+export BUILD_NETWORK=10.47.0.0/16
+export BUILD_HA_SUBNETS=true
+export BUILD_HA_NAT_GATEWAYS=false
 
 # Region
 export AWS_DEFAULT_REGION=us-west-2

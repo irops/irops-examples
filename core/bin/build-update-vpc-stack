@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script updates the Environment NetworkAcls Stack in an Environment Account.
+# This script updates the Build VPC Stack in the Core Account.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -33,7 +33,7 @@ account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
-templatespath=/environment
+templatespath=/build
 
 
 #  2. Define functions
@@ -189,16 +189,10 @@ if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region
     unset templatesbucket
 fi
 
-if ! aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-VPC \
+if ! aws cloudformation describe-stacks --stack-name Build-VPC \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to update - $ENVIRONMENT_NAME-VPC Stack does not exist!"
+    echo "Unable to update - Build-VPC Stack does not exist!"
     exit 2
-fi
-
-if ! aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
-                                        --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to update - $ENVIRONMENT_NAME-NetworkAcls Stack does not exist!"
-    exit 3
 fi
 
 # Prevent certain environment variables from breaking commands
@@ -257,7 +251,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Environment-NetworkAcls*.json' \\"
+    echo "            --exclude '*' --include 'Build-VPC*.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -265,11 +259,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Environment-NetworkAcls*.json' \\"
+    echo ">             --exclude '*' --include 'Build-VPC*.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Environment-NetworkAcls*.json' \
+                --exclude '*' --include 'Build-VPC*.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -293,28 +287,28 @@ echo
 echo "Commands:"
 echo
 if [ ! -z $templatesbucket ]; then
-    echo "aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
-    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls.json \\"
-    echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \\"
-    echo "                                --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
-    echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+    echo "aws cloudformation update-stack --stack-name Build-VPC \\"
+    echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
+    echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
+    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
+    echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Build \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
 else
-    echo "aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
-    echo "                                --template-body file://$templatesdir/Environment-NetworkAcls.json \\"
-    echo "                                --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \\"
-    echo "                                --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
-    echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+    echo "aws cloudformation update-stack --stack-name Build-VPC \\"
+    echo "                                --template-body file://$templatesdir/Build-VPC.json \\"
+    echo "                                --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
+    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
+    echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Build \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -325,52 +319,52 @@ run
 if [ $choice = y ]; then
     echo
     if [ ! -z $templatesbucket ]; then
-        echo "# aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls.json \\"
-        echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \\"
-        echo ">                                 --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
-        echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+        echo "# aws cloudformation update-stack --stack-name Build-VPC \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-$type.json \\"
+        echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
+        echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
+        echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Build \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \
-                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls.json \
-                                        --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \
-                                        --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \
-                                                     ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
-                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
+        aws cloudformation update-stack --stack-name Build-VPC \
+                                        --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \
+                                        --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \
+                                        --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
+                                                     ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
+                                                     ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Build \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_IAM \
                                         --profile $profile --region $region --output table
     else
-        echo "# aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
-        echo ">                                 --template-body file://$templatesdir/Environment-NetworkAcls.json \\"
-        echo ">                                 --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \\"
-        echo ">                                 --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
-        echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
+        echo "# aws cloudformation update-stack --stack-name Build-VPC \\"
+        echo ">                                 --template-body file://$templatesdir/Build-VPC.json \\"
+        echo ">                                 --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
+        echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
+        echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Build \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation update-stack --stack-name $ENVIRONMENT_NAME-NetworkAcls \
-                                        --template-body file://$templatesdir/Environment-NetworkAcls.json \
-                                        --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \
-                                        --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \
-                                                     ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
-                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
+        aws cloudformation update-stack --stack-name Build-VPC \
+                                        --template-body file://$templatesdir/Build-VPC.json \
+                                        --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \
+                                        --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
+                                                     ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
+                                                     ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Build \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_IAM \
                                         --profile $profile --region $region --output table
@@ -391,15 +385,15 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
+echo "aws cloudformation describe-stacks --stack-name Build-VPC \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name $ENVIRONMENT_NAME-NetworkAcls --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name Build-VPC --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if [ "$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
+if [ "$(aws cloudformation describe-stacks --stack-name Build-VPC \
                                            --query 'Stacks[].StackStatus' \
                                            --profile $profile --region $region --output text 2> /dev/null)" = "UPDATE_COMPLETE" ]; then
     echo
@@ -414,10 +408,10 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
+        echo "# aws cloudformation describe-stacks --stack-name Build-VPC \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
+        aws cloudformation describe-stacks --stack-name Build-VPC \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table 2> /dev/null
         pause
@@ -426,14 +420,14 @@ else
         seconds=$update_default
         while ((attempt++ <= update_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name $ENVIRONMENT_NAME-NetworkAcls --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name Build-VPC --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name $ENVIRONMENT_NAME-NetworkAcls --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name Build-VPC --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table 2> /dev/null
 
-            status=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
+            status=$(aws cloudformation describe-stacks --stack-name Build-VPC \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
@@ -494,7 +488,7 @@ if [ $verbose = 1 ]; then
     echo
     echo "Commands:"
     echo
-    echo "aws cloudformation describe-stack-resources --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
+    echo "aws cloudformation describe-stack-resources --stack-name Build-VPC \\"
     echo "                                            --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
     echo "                                            --profile $profile --region $region --output table"
 
@@ -502,10 +496,10 @@ if [ $verbose = 1 ]; then
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stack-resources --stack-name $ENVIRONMENT_NAME-NetworkAcls \\"
+        echo "# aws cloudformation describe-stack-resources --stack-name Build-VPC \\"
         echo ">                                             --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \\"
         echo ">                                             --profile $profile --region $region --output table"
-        aws cloudformation describe-stack-resources --stack-name $ENVIRONMENT_NAME-NetworkAcls \
+        aws cloudformation describe-stack-resources --stack-name Build-VPC \
                                                     --query 'StackResources[].[ResourceType,LogicalResourceId,PhysicalResourceId,ResourceStatus]' \
                                                     --profile $profile --region $region --output table 2> /dev/null
 
