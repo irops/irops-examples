@@ -298,7 +298,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardTopics-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Core \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 else
@@ -307,7 +307,7 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Core-StandardTopics-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Core \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 fi
@@ -322,7 +322,7 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardTopics-StackPolicy.json \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Core \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name StandardTopics \
@@ -330,7 +330,7 @@ if [ $choice = y ]; then
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-StandardTopics-StackPolicy.json \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Core \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --profile $profile --region $region --output table
     else
@@ -339,7 +339,7 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-body file://$templatesdir/Core-StandardTopics-StackPolicy.json \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Core \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --profile $profile --region $region --output table"
         aws cloudformation update-stack --stack-name StandardTopics \
@@ -347,7 +347,7 @@ if [ $choice = y ]; then
                                         --stack-policy-body file://$templatesdir/Core-StandardTopics-StackPolicy.json \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Core \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --profile $profile --region $region --output table
     fi

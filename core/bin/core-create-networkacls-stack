@@ -191,8 +191,8 @@ fi
 
 if ! aws cloudformation describe-stacks --stack-name Core-VPC \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Core-VPC Stack does not exist!"
-    exit 2
+    echo "Stack dependency missing - Core-VPC Stack does not exist!"
+    exit 5
 fi
 
 # Prevent certain environment variables from breaking commands

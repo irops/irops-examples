@@ -300,7 +300,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -312,7 +312,7 @@ else
     echo "                                             ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -330,7 +330,7 @@ if [ $choice = y ]; then
         echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -341,7 +341,7 @@ if [ $choice = y ]; then
                                                      ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table
@@ -353,7 +353,7 @@ if [ $choice = y ]; then
         echo ">                                              ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -364,7 +364,7 @@ if [ $choice = y ]; then
                                                      ParameterKey=StandardGroupsStackName,ParameterValue=StandardGroups \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table
