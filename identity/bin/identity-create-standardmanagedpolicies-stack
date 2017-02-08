@@ -5,9 +5,9 @@
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
 #
-# Since this script is run during initial bootstrapping of an Account which 
+# Since this script is run during initial bootstrapping of an Account which
 # may not yet have certain S3 buckets created to hold templates, the
-# script checks for the existance of the S3 templates bucket, and if it 
+# script checks for the existance of the S3 templates bucket, and if it
 # exists, it will upload the template to the bucket and run it via URL,
 # but if it does not exist, it will run it via file.
 #
@@ -292,7 +292,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -302,7 +302,7 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -328,7 +328,7 @@ else
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Identity \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
@@ -337,7 +337,7 @@ else
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Identity \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_IAM \
                                             --profile $profile --region $region --output table
@@ -347,7 +347,7 @@ else
             echo ">                                 --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Identity \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
@@ -356,7 +356,7 @@ else
                                             --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Identity \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_IAM \
                                             --profile $profile --region $region --output table

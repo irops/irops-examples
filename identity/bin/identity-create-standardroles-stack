@@ -5,9 +5,9 @@
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
 #
-# Since this script is run during initial bootstrapping of an Account which 
+# Since this script is run during initial bootstrapping of an Account which
 # may not yet have certain S3 buckets created to hold templates, the
-# script checks for the existance of the S3 templates bucket, and if it 
+# script checks for the existance of the S3 templates bucket, and if it
 # exists, it will upload the template to the bucket and run it via URL,
 # but if it does not exist, it will run it via file.
 #
@@ -195,6 +195,12 @@ if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region
     unset templatesbucket
 fi
 
+if ! aws cloudformation describe-stacks --stack-name StandardManagedPolicies \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - StandardManagedPolicies Stack does not exist!"
+    exit 5
+fi
+
 # Prevent certain environment variables from breaking commands
 unset AWS_DEFAULT_PROFILE
 unset AWS_CREDENTIAL_FILE
@@ -293,7 +299,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -304,7 +310,7 @@ else
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -331,7 +337,7 @@ else
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Identity \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
@@ -341,7 +347,7 @@ else
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Identity \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table
@@ -352,7 +358,7 @@ else
             echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Identity \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
             echo ">                                 --profile $profile --region $region --output table"
@@ -362,7 +368,7 @@ else
                                             --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Identity \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --capabilities CAPABILITY_NAMED_IAM \
                                             --profile $profile --region $region --output table

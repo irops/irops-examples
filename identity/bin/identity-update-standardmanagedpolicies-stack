@@ -298,7 +298,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -308,7 +308,7 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -324,7 +324,7 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -333,7 +333,7 @@ if [ $choice = y ]; then
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-StandardManagedPolicies-StackPolicy.json \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_IAM \
                                         --profile $profile --region $region --output table
@@ -343,7 +343,7 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -352,7 +352,7 @@ if [ $choice = y ]; then
                                         --stack-policy-body file://$templatesdir/Identity-StandardManagedPolicies-StackPolicy.json \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_IAM \
                                         --profile $profile --region $region --output table
