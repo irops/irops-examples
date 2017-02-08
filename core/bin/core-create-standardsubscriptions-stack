@@ -5,9 +5,9 @@
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
 #
-# Since this script is run during initial bootstrapping of an Account which 
+# Since this script is run during initial bootstrapping of an Account which
 # may not yet have certain S3 buckets created to hold templates, the
-# script checks for the existance of the S3 templates bucket, and if it 
+# script checks for the existance of the S3 templates bucket, and if it
 # exists, it will upload the template to the bucket and run it via URL,
 # but if it does not exist, it will run it via file.
 #
@@ -193,6 +193,12 @@ fi
 
 if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region $region 2> /dev/null; then
     unset templatesbucket
+fi
+
+if ! aws cloudformation describe-stacks --stack-name StandardTopics \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - StandardTopics Stack does not exist!"
+    exit 5
 fi
 
 # Prevent certain environment variables from breaking commands

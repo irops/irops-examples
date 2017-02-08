@@ -5,9 +5,9 @@
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
 #
-# Since this script is run during initial bootstrapping of an Account which 
+# Since this script is run during initial bootstrapping of an Account which
 # may not yet have certain S3 buckets created to hold templates, the
-# script checks for the existance of the S3 templates bucket, and if it 
+# script checks for the existance of the S3 templates bucket, and if it
 # exists, it will upload the template to the bucket and run it via URL,
 # but if it does not exist, it will run it via file.
 #
@@ -195,6 +195,12 @@ if ! aws s3api head-bucket --bucket $templatesbucket --profile $profile --region
     unset templatesbucket
 fi
 
+if ! aws cloudformation describe-stacks --stack-name StandardTopics \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - StandardTopics Stack does not exist!"
+    exit 5
+fi
+
 # Prevent certain environment variables from breaking commands
 unset AWS_DEFAULT_PROFILE
 unset AWS_CREDENTIAL_FILE
@@ -290,18 +296,20 @@ if [ ! -z $templatesbucket ]; then
     echo "aws cloudformation create-stack --stack-name CustomSubscriptions \\"
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Core \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 else
     echo "aws cloudformation create-stack --stack-name CustomSubscriptions \\"
     echo "                                --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \\"
+    echo "                                --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Core \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --profile $profile --region $region --output table"
 fi
@@ -324,34 +332,38 @@ else
             echo "# aws cloudformation create-stack --stack-name CustomSubscriptions \\"
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \\"
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \\"
+            echo ">                                 --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Core \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name CustomSubscriptions \
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions.json \
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-CustomSubscriptions-StackPolicy.json \
+                                            --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Core \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         else
             echo "# aws cloudformation create-stack --stack-name CustomSubscriptions \\"
             echo ">                                 --template-body file://$templatesdir/Core-CustomSubscriptions.json \\"
             echo ">                                 --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \\"
+            echo ">                                 --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-            echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+            echo ">                                        Key=Environment,Value=Core \\"
             echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
             echo ">                                 --profile $profile --region $region --output table"
             aws cloudformation create-stack --stack-name CustomSubscriptions \
                                             --template-body file://$templatesdir/Core-CustomSubscriptions.json \
                                             --stack-policy-body file://$templatesdir/Core-CustomSubscriptions-StackPolicy.json \
+                                            --parameters ParameterKey=StandardTopicsStackName,ParameterValue=StandardTopics \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
-                                                   Key=Environment,Value=$ENVIRONMENT_NAME \
+                                                   Key=Environment,Value=Core \
                                                    Key=Owner,Value=$OWNER_EMAIL \
                                             --profile $profile --region $region --output table
         fi

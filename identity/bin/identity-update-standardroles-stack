@@ -299,7 +299,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -310,7 +310,7 @@ else
     echo "                                --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
-    echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
+    echo "                                       Key=Environment,Value=Identity \\"
     echo "                                       Key=Owner,Value=$OWNER_EMAIL \\"
     echo "                                --capabilities CAPABILITY_NAMED_IAM \\"
     echo "                                --profile $profile --region $region --output table"
@@ -327,7 +327,7 @@ if [ $choice = y ]; then
         echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -337,7 +337,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table
@@ -348,7 +348,7 @@ if [ $choice = y ]; then
         echo ">                                 --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
-        echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
+        echo ">                                        Key=Environment,Value=Identity \\"
         echo ">                                        Key=Owner,Value=$OWNER_EMAIL \\"
         echo ">                                 --capabilities CAPABILITY_NAMED_IAM \\"
         echo ">                                 --profile $profile --region $region --output table"
@@ -358,7 +358,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=StandardManagedPoliciesStackName,ParameterValue=StandardManagedPolicies \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
-                                               Key=Environment,Value=$ENVIRONMENT_NAME \
+                                               Key=Environment,Value=Identity \
                                                Key=Owner,Value=$OWNER_EMAIL \
                                         --capabilities CAPABILITY_NAMED_IAM \
                                         --profile $profile --region $region --output table

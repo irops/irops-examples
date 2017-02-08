@@ -49,6 +49,24 @@
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
       }
+    },
+
+    "kmccutchenUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "kmccutchen",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
+      }
+    },
+
+    "gveazeyUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "gveazey",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
+      }
     }
   }
 }
