@@ -107,6 +107,7 @@
       "Value" :  { "Ref" : "AdministratorsWithoutBillingGroup" },
       "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorsWithoutBillingGroup" }}
     },
+    
     "NetworkAdministratorsGroup" : {
       "Description" : "The NetworkAdministratorsGroup Name",
       "Value" :  { "Ref" : "NetworkAdministratorsGroup" },
