@@ -76,7 +76,7 @@
         "EnableDnsHostnames" : "true",
         "CidrBlock" : { "Ref" : "CoreNetwork" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-VPC" }}
+          { "Key" : "Name", "Value" : "Core-VPC" }
         ]
       }
     },
@@ -85,7 +85,7 @@
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-InternetGateway" }}
+          { "Key" : "Name", "Value" : "Core-InternetGateway" }
         ]
       }
     },
@@ -98,6 +98,24 @@
        }
     },
 
+    "VPNGateway" : {
+      "Type" : "AWS::EC2::VPNGateway",
+      "Properties" : {
+        "Type" : "ipsec.1",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Core-VPNGateway" }
+        ]
+      }
+    },
+
+    "VPNGatewayAttachment" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "VPC" },
+         "VpnGatewayId" : { "Ref" : "VPNGateway" }
+       }
+    },
+
     "PublicSubnetA" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
@@ -107,7 +125,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "true",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-PublicSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-PublicSubnetA" }
         ]
       }
     },
@@ -121,7 +139,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "true",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-PublicSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-PublicSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -136,7 +154,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "true",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-WebSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-WebSubnetA" }
         ]
       }
     },
@@ -150,7 +168,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "true",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-WebSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-WebSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -165,7 +183,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-ApplicationSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-ApplicationSubnetA" }
         ]
       }
     },
@@ -179,7 +197,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-ApplicationSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-ApplicationSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -194,7 +212,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-DatabaseSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-DatabaseSubnetA" }
         ]
       }
     },
@@ -208,7 +226,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-DatabaseSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-DatabaseSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -223,7 +241,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-ProductionQueueSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-ProductionQueueSubnetA" }
         ]
       }
     },
@@ -237,7 +255,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-ProductionQueueSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-ProductionQueueSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -252,7 +270,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-StagingQueueSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-StagingQueueSubnetA" }
         ]
       }
     },
@@ -266,7 +284,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-StagingQueueSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-StagingQueueSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -281,7 +299,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-QAQueueSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-QAQueueSubnetA" }
         ]
       }
     },
@@ -295,7 +313,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-QAQueueSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-QAQueueSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -310,7 +328,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-DevelopmentQueueSubnetA" }}
+          { "Key" : "Name", "Value" : "Core-DevelopmentQueueSubnetA" }
         ]
       }
     },
@@ -324,7 +342,7 @@
         "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-DevelopmentQueueSubnetB" }}
+          { "Key" : "Name", "Value" : "Core-DevelopmentQueueSubnetB" }
         ]
       },
       "Condition" : "CreateMultiZoneSubnets"
@@ -335,7 +353,7 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-PublicRouteTable" } }
+          { "Key" : "Name", "Value" : "Core-PublicRouteTable" }
         ]
       }
     },
@@ -566,6 +584,12 @@
       "Description" : "The VPC",
       "Value" :  { "Ref" : "VPC" },
       "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-VPC" }}
+    },
+
+    "VPNGateway" : {
+      "Description" : "The VPNGateway",
+      "Value" :  { "Ref" : "VPNGateway" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-VPNGateway" } }
     },
 
     "PublicSubnetA" : {
