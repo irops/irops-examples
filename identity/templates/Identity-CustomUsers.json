@@ -139,6 +139,15 @@
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
+    },
+
+    "lwadeUser" : {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "lwade",
+        "Path" : "/",
+        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+      }
     }
   }
 }
