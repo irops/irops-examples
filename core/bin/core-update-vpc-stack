@@ -320,7 +320,7 @@ if [ $choice = y ]; then
     echo
     if [ ! -z $templatesbucket ]; then
         echo "# aws cloudformation update-stack --stack-name Core-VPC \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC-$type.json \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
         echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"

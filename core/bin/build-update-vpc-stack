@@ -320,7 +320,7 @@ if [ $choice = y ]; then
     echo
     if [ ! -z $templatesbucket ]; then
         echo "# aws cloudformation update-stack --stack-name Build-VPC \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-$type.json \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
         echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
