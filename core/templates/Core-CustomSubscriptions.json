@@ -60,7 +60,7 @@
 
     "EventsTopicMCrawfordEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
-      "Properties" : { 
+      "Properties" : {
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-EventsTopic" }},
         "Protocol" : "email",
         "Endpoint" : "mcrawford@hpe.com"
@@ -78,7 +78,7 @@
 
     "EventsTopicGVeazeyEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
-      "Properties" : { 
+      "Properties" : {
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-EventsTopic" }},
         "Protocol" : "email",
         "Endpoint" : "gregg.veazey@hpe.com"
@@ -87,10 +87,28 @@
 
     "EventsSMSTopicMCrawfordSMSSubscription" : {
       "Type" : "AWS::SNS::Subscription",
-      "Properties" : { 
+      "Properties" : {
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-EventsSMSTopic" }},
         "Protocol" : "sms",
         "Endpoint" : "+14156525483"
+      }
+    },
+
+    "EventsSMSTopicKMccutchenSMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-EventsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+19542421633"
+      }
+    },
+
+    "EventsSMSTopicGVeazeySMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-EventsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+12143920541"
       }
     },
 
@@ -114,7 +132,7 @@
 
     "AlarmsTopicGVeazeyEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
-      "Properties" : { 
+      "Properties" : {
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-AlarmsTopic" }},
         "Protocol" : "email",
         "Endpoint" : "gregg.veazey@hpe.com"
@@ -127,6 +145,24 @@
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-AlarmsSMSTopic" }},
         "Protocol" : "sms",
         "Endpoint" : "+14156525483"
+      }
+    },
+
+    "AlarmsSMSTopicKMccutchenSMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-AlarmsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+19542421633"
+      }
+    },
+
+    "AlarmsSMSTopicGVeazeySMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-AlarmsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+12143920541"
       }
     },
 
@@ -150,7 +186,7 @@
 
     "BillsTopicGVeazeyEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
-      "Properties" : { 
+      "Properties" : {
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-BillsTopic" }},
         "Protocol" : "email",
         "Endpoint" : "gregg.veazey@hpe.com"
@@ -163,6 +199,24 @@
         "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-BillsSMSTopic" }},
         "Protocol" : "sms",
         "Endpoint" : "+14156525483"
+      }
+    },
+
+    "BillsSMSTopicKMccutchenSMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-BillsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+19542421633"
+      }
+    },
+
+    "BillsSMSTopicGVeazeySMSSubscription" : {
+      "Type" : "AWS::SNS::Subscription",
+      "Properties" : {
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-BillsSMSTopic" }},
+        "Protocol" : "sms",
+        "Endpoint" : "+12143920541"
       }
     }
   }
