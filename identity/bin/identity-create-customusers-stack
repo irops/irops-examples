@@ -263,7 +263,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Identity-CustomUsers*.json' \\"
+    echo "            --exclude '*' --include 'Identity-CustomUsers.json' --include 'Identity-CustomUsers-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -271,11 +271,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Identity-CustomUsers*.json' \\"
+    echo ">             --exclude '*' --include 'Identity-CustomUsers.json' --include 'Identity-CustomUsers-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Identity-CustomUsers*.json' \
+                --exclude '*' --include 'Identity-CustomUsers.json' --include 'Identity-CustomUsers-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
