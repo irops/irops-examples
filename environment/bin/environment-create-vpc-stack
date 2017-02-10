@@ -245,7 +245,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Environment-VPC*.json' \\"
+    echo "            --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -253,11 +253,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Environment-VPC*.json' \\"
+    echo ">             --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Environment-VPC*.json' \
+                --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
