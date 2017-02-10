@@ -441,6 +441,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

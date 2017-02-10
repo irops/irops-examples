@@ -245,7 +245,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-VPC*.json' \\"
+    echo "            --exclude '*' --include 'Core-VPC.json' --include 'Core-VPC-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -253,11 +253,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-VPC*.json' \\"
+    echo ">             --exclude '*' --include 'Core-VPC.json' --include 'Core-VPC-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-VPC*.json' \
+                --exclude '*' --include 'Core-VPC.json' --include 'Core-VPC-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -287,6 +287,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
     echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                             ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=CoreVPNGateway,ParameterValue=true \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -300,6 +301,7 @@ else
     echo "                                --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
     echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                             ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=CoreVPNGateway,ParameterValue=true \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -329,6 +331,7 @@ else
             echo ">                                 --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
             echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
             echo ">                                              ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=CoreVPNGateway,ParameterValue=true \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Core \\"
@@ -341,6 +344,7 @@ else
                                             --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \
                                                          ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                                          ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \
+                                                         ParameterKey=CoreVPNGateway,ParameterValue=true \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Core \
@@ -354,6 +358,7 @@ else
             echo ">                                 --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
             echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
             echo ">                                              ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=CoreVPNGateway,ParameterValue=true \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Core \\"
@@ -366,6 +371,7 @@ else
                                             --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \
                                                          ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                                          ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \
+                                                         ParameterKey=CoreVPNGateway,ParameterValue=true \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Core \
@@ -435,6 +441,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name Core-VPC \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

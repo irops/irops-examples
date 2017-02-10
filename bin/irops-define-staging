@@ -29,10 +29,17 @@ export CORE_HA_NAT_GATEWAYS=false
 
 # Build
 export BUILD_CODE=b
-export BUIDL_NAME="Build"
+export BUILD_NAME="Build"
 export BUILD_NETWORK=10.47.0.0/16
-export BUILD_HA_SUBNETS=false
+export BUILD_HA_SUBNETS=true
 export BUILD_HA_NAT_GATEWAYS=false
+
+# Identity
+export IDENTITY_CODE=i
+export IDENTITY_NAME="Identity"
+export IDENTITY_NETWORK=10.255.0.0/16
+export IDENTITY_HA_SUBNETS=true
+export IDENTITY_HA_NAT_GATEWAYS=false
 
 # Region
 export AWS_DEFAULT_REGION=us-west-2

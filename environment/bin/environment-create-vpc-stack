@@ -288,6 +288,7 @@ if [ ! -z $templatesbucket ]; then
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -302,6 +303,7 @@ else
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -332,6 +334,7 @@ else
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -345,6 +348,7 @@ else
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
                                                          ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
+                                                         ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -359,6 +363,7 @@ else
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -372,6 +377,7 @@ else
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
                                                          ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
+                                                         ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -441,6 +447,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-VPC \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

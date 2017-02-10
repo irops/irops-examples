@@ -1,0 +1,539 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Core-VPCPeeringConnections Template. This template creates all VPCPeeringConnections.",
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Stack Dependencies" },
+          "Parameters" : [ "CoreVPCStackName", "CustomerGatewayStackName" ]
+        },
+        {
+          "Label" : { "default" : "VPNConnection Configuration" },
+          "Parameters" : [ "CustomerGatewayName", "VPNConnectionRoute1" ]
+        }
+      ],
+
+      "ParameterLabels" : {
+        "CoreVPCStackName" : { "default" : "Core VPC Stack Name" },
+        "CustomerGatewayStackName" : { "default" : "CustomerGateway Stack Name" },
+        "CustomerGatewayName" : { "default" : "Customer Gateway Name" },
+        "VPNConnectionRoute1" : { "default" : "VPNConnection Route 1" }
+      }
+    }
+  },
+
+  "Parameters" : {
+    "CoreVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Core VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "Core-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "BuildVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Build VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "",
+      "AllowedPattern" : "^$|^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "ProductionVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Production VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "Production-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "StagingVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Staging VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "Staging-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "QAVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the QA VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "QA-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    },
+
+    "DevelopmentVPCStackName" : {
+      "Description" : "Name of the CloudFormation Stack containing the Development VPC.",
+      "Type" : "String",
+      "MinLength" : 8,
+      "MaxLength" : 64,
+      "Default" : "Development-VPC",
+      "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
+    }
+  },
+
+  "Conditions" : {
+    "PeerToBuildVPC"       : { "Fn:Not" : [ { "Fn::Equals" : [ { "Ref" : "BuildVPCStackName" }, "" ]}]},
+    "PeerToProductionVPC"  : { "Fn:Not" : [ { "Fn::Equals" : [ { "Ref" : "ProductionVPCStackName" }, "NONE" ]}]},
+    "PeerToStagingVPC"     : { "Fn:Not" : [ { "Fn::Equals" : [ { "Ref" : "StagingVPCStackName" }, "NONE" ]}]},
+    "PeerToQAVPC"          : { "Fn:Not" : [ { "Fn::Equals" : [ { "Ref" : "QAVPCStackName" }, "NONE" ]}]},
+    "PeerToDevelopmentVPC" : { "Fn:Not" : [ { "Fn::Equals" : [ { "Ref" : "DevelopmentVPCStackName" }, "NONE" ]}]}
+  },
+
+  "Resources" : {
+    "BuildVPCPeeringConnection" : {
+      "Type" : "AWS::EC2::VPCPeeringConnection",
+      "Properties" : {
+        "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-VPC" } },
+        "PeerVpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-VPC" } },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "Core-BuildVPCPeeringConnection" } }
+        ]
+      },
+      "Condition" : "PeerToBuildVPC"
+    },
+
+    "BuildVPCPeeringConnectionRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "RouteTableId" : { "Ref" : "RouteTable" },
+        "VpcPeeringConnectionId" : { "Ref" : "myVPCPeeringConnection" }
+      }
+
+
+
+
+
+
+    "VPC" : {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "CidrBlock" : { "Fn::Sub" : "10.${VpcNetwork}.0.0/18" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-VPC" } }
+        ]
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-InternetGateway" } }
+        ]
+      }
+    },
+
+    "InternetGatewayAttachment" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "VPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
+       }
+    },
+
+    "VPNGateway" : {
+      "Type" : "AWS::EC2::VPNGateway",
+      "Properties" : {
+        "Type" : "ipsec.1",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-VPNGateway" } }
+        ]
+      }
+    },
+
+    "VPNGatewayAttachment" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "VPC" },
+         "VPNGatewayId" : { "Ref" : "VPNGateway" }
+       }
+    },
+
+    "WebSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "Web", "ZoneA" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "true",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-WebSubnetA" } }
+        ]
+      }
+    },
+
+    "WebSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "Web", "ZoneB" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "true",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-WebSubnetB" } }
+        ]
+      }
+    },
+
+    "ProductionMsgSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "ProductionMsg", "ZoneA" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-ProductionMsgSubnetA" } }
+        ]
+      }
+    },
+
+    "ProductionMsgSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "ProductionMsg", "ZoneB" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-ProductionMsgSubnetB" } }
+        ]
+      }
+    },
+
+    "StagingMsgSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "StagingMsg", "ZoneA" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-StagingMsgSubnetA" } }
+        ]
+      }
+    },
+
+    "StagingMsgSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "StagingMsg", "ZoneB" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-StagingMsgSubnetB" } }
+        ]
+      }
+    },
+
+    "QAMsgSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "ProductionMsg", "ZoneA" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-QAMsgSubnetA" } }
+        ]
+      }
+    },
+
+    "QAMsgSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "QAMsg", "ZoneB" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-QAMsgSubnetB" } }
+        ]
+      }
+    },
+
+    "DevelopmentMsgSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "DevelopmentMsg", "ZoneA" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-DevelopmentMsgSubnetA" } }
+        ]
+      }
+    },
+
+    "DevelopmentMsgSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Ref" : "VpcNetwork" }, { "Fn::FindInMap" : [ "SubnetMap", "DevelopmentMsg", "ZoneB" ] } ]] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-DevelopmentMsgSubnetB" } }
+        ]
+      }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-PublicRouteTable" } }
+        ]
+      }
+    },
+
+    "PublicDefaultRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "WebSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "WebSubnetA" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "WebSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "WebSubnetB" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "NatGatewayAEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "Domain" : "vpc"
+      }
+    },
+
+    "NatGatewayBEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "Domain" : "vpc"
+      }
+    },
+
+    "NatGatewayA" : {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayAEIP", "AllocationId" ] },
+        "SubnetId" : { "Ref" : "WebSubnetA" }
+      }
+    },
+
+    "NatGatewayB" : {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayBEIP", "AllocationId" ] },
+        "SubnetId" : { "Ref" : "WebSubnetB" }
+      }
+    },
+
+    "PrivateRouteTableA" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-PrivateRouteTableA" } }
+        ]
+      }
+    },
+
+    "PrivateDefaultRouteA" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "NatGatewayId" : { "Ref" : "NatGatewayA" }
+      }
+    },
+
+    "ProductionMsgSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "SubnetId" : { "Ref" : "ProductionMsgSubnetA" }
+      }
+    },
+
+    "StagingMsgSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "SubnetId" : { "Ref" : "StagingMsgSubnetA" }
+      }
+    },
+
+    "QAMsgSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "SubnetId" : { "Ref" : "QAMsgSubnetA" }
+      }
+    },
+
+    "DevelopmentMsgSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "SubnetId" : { "Ref" : "DevelopmentMsgSubnetA" }
+      }
+    },
+
+    "PrivateRouteTableB" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CompanyName}${SystemName}${EnvironmentName}-PrivateRouteTableB" } }
+        ]
+      }
+    },
+
+    "PrivateDefaultRouteB" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "NatGatewayId" : { "Ref" : "NatGatewayB" }
+      }
+    },
+
+    "ProductionMsgSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "SubnetId" : { "Ref" : "ProductionMsgSubnetB" }
+      }
+    },
+
+    "StagingMsgSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "SubnetId" : { "Ref" : "StagingMsgSubnetB" }
+      }
+    },
+
+    "QAMsgSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "SubnetId" : { "Ref" : "QAMsgSubnetB" }
+      }
+    },
+
+    "DevelopmentMsgSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "SubnetId" : { "Ref" : "DevelopmentMsgSubnetB" }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "VPC" : {
+      "Description" : "The VPC",
+      "Value" :  { "Ref" : "VPC" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-VPC" } }
+    },
+
+    "WebSubnetA" : {
+      "Description" : "The Web Subnet in Availability Zone A",
+      "Value" :  { "Ref" : "WebSubnetA" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-WebSubnetA" }}
+    },
+
+    "WebSubnetB" : {
+      "Description" : "The Web Subnet in Availability Zone B",
+      "Value" :  { "Ref" : "WebSubnetB" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-WebSubnetB" }}
+    },
+
+    "ProductionMsgSubnetA" : {
+      "Description" : "The Production Message Subnet in Availability Zone A",
+      "Value" :  { "Ref" : "ProductionMsgSubnetA" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ProductionMsgSubnetA" }}
+    },
+
+    "ProductionMsgSubnetB" : {
+      "Description" : "The Production Message Subnet in Availability Zone B",
+      "Value" :  { "Ref" : "ProductionMsgSubnetB" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ProductionMsgSubnetB" }}
+    },
+
+    "StagingMsgSubnetA" : {
+      "Description" : "The Staging Message Subnet in Availability Zone A",
+      "Value" :  { "Ref" : "StagingMsgSubnetA" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-StagingMsgSubnetA" }}
+    },
+
+    "StagingMsgSubnetB" : {
+      "Description" : "The Staging Message Subnet in Availability Zone B",
+      "Value" :  { "Ref" : "StagingMsgSubnetB" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-StagingMsgSubnetB" }}
+    },
+
+    "QAMsgSubnetA" : {
+      "Description" : "The QA Message Subnet in Availability Zone A",
+      "Value" :  { "Ref" : "QAMsgSubnetA" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-QAMsgSubnetA" }}
+    },
+
+    "QAMsgSubnetB" : {
+      "Description" : "The QA Message Subnet in Availability Zone B",
+      "Value" :  { "Ref" : "QAMsgSubnetB" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-QAMsgSubnetB" }}
+    },
+
+    "DevelopmentMsgSubnetA" : {
+      "Description" : "The Development Message Subnet in Availability Zone A",
+      "Value" :  { "Ref" : "DevelopmentMsgSubnetA" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DevelopmentMsgSubnetA" }}
+    },
+
+    "DevelopmentMsgSubnetB" : {
+      "Description" : "The Development Message Subnet in Availability Zone B",
+      "Value" :  { "Ref" : "DevelopmentMsgSubnetB" },
+      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DevelopmentMsgSubnetB" }}
+    }
+  }
+}
