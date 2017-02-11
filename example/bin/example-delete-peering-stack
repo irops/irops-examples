@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script deletes the IROP-Examples VPC Peering Example Stack.
+# This script deletes the Example-VPCPeeringConnection Example Stack.
 #
 # This script is written in a format suitable for interactive demos,
 # but can be run non-Iteractively and more quickly with the "-I" flag.
@@ -13,14 +13,10 @@ templatesdir=${bindir%/*}/templates
 keysdir=${bindir%/*/*}/keys
 tmpdir=/var/tmp
 
-if [ -z "$EXAMPLES_HOME" ]; then
-    echo "EXAMPLES_HOME not set, please run examples-environment setup script."
+if [ -z "$IROPS_HOME" ]; then
+    echo "IROPS_HOME not set, please source the appropriate irops-define-<environment> script."
     exit 1
 fi
-
-COMPANY_NAME=Example
-SYSTEM_NAME=Example
-ENVIRONMENT_NAME=Example
 
 step=0
 speed_max=400
@@ -159,9 +155,9 @@ if [ -z $region ]; then
 else
     case $region in
       us-east-1)
-        aws_s3_domain=s3.amazonaws.com;;
-      us-east-2|us-west-1|us-west-2|sa-east-1|eu-west-1|eu-central-1|ap-northeast-1|ap-southeast-1|ap-southeast-2)
-        aws_s3_domain=s3-$aws_region.amazonaws.com;;
+        s3_domain=s3.amazonaws.com;;
+      us-east-2|us-west-1|us-west-2|ca-central-1|sa-east-1|eu-west-1|eu-west-2|eu-central-1|ap-northeast-1|ap-northeast-2|ap-south-1|ap-southeast-1|ap-southeast-2)
+        s3_domain=s3-$region.amazonaws.com;;
     *)
         echo "-r $region invalid: Please specify a valid region"
         exit 21;;
@@ -183,9 +179,15 @@ fi
 profile=$account-$user
 
 if ! grep -s -q "\[profile $profile]" ~/.aws/config; then
-    echo "Could not find AWS ($account) Account Demo ($user) User AWSCLI profile!"
+    echo "Could not find ($account) Account ($user) User AWSCLI profile!"
     echo "Expected to find: [profile $profile] in ~/.aws/config"
     exit 53
+fi
+
+if ! aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Unable to delete - Example-VPCPeeringConnection Stack does not exist!"
+    exit 2
 fi
 
 # Prevent certain environment variables from breaking commands
@@ -195,7 +197,7 @@ unset EC2_PRIVATE_KEY
 unset EC2_CERT
 
 
-#  5. Run Example
+#  5. Run
 
 start=$(date +%s)
 
@@ -240,10 +242,10 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation delete-stack --stack-name PeeringExample \\"
+echo "aws cloudformation delete-stack --stack-name Example-VPCPeeringConnection \\"
 echo "                                --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name PeeringExample \
+if ! aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \
                                       --profile $profile --region $region --output text &> /dev/null; then
     echo
     tput rev
@@ -257,9 +259,9 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation delete-stack --stack-name PeeringExample \\"
+        echo "# aws cloudformation delete-stack --stack-name Example-VPCPeeringConnection \\"
         echo ">                                 --profile $profile --region $region --output table"
-        aws cloudformation delete-stack --stack-name PeeringExample \
+        aws cloudformation delete-stack --stack-name Example-VPCPeeringConnection \
                                         --profile $profile --region $region --output table
 
         next
@@ -278,15 +280,15 @@ echo "============================================================"
 echo
 echo "Commands:"
 echo
-echo "aws cloudformation describe-stacks --stack-name PeeringExample \\"
+echo "aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \\"
 echo "                                   --query 'Stacks[].[StackName,StackStatus]' \\"
 echo "                                   --profile $profile --region $region --output table"
 echo
-echo "aws cloudformation describe-stack-events --stack-name PeeringExample --max-items 5 \\"
+echo "aws cloudformation describe-stack-events --stack-name Example-VPCPeeringConnection --max-items 5 \\"
 echo "                                         --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
 echo "                                         --profile $profile --region $region --output table"
 
-if ! aws cloudformation describe-stacks --stack-name PeeringExample \
+if ! aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \
                                         --profile $profile --region $region &> /dev/null; then
     echo
     tput rev
@@ -300,28 +302,29 @@ else
 
     if [ $choice = y ]; then
         echo
-        echo "# aws cloudformation describe-stacks --stack-name PeeringExample \\"
+        echo "# aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \\"
         echo ">                                    --query 'Stacks[].[StackName,StackStatus]' \\"
         echo ">                                    --profile $profile --region $region --output table"
-        aws cloudformation describe-stacks --stack-name PeeringExample \
+        aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \
                                            --query 'Stacks[].[StackName,StackStatus]' \
                                            --profile $profile --region $region --output table
         pause
 
         attempt=0
-        ((seconds=$delete_default * $speed / 100))
+        seconds=$delete_default
         while ((attempt++ <= delete_attempts)); do
             echo
-            echo "# aws cloudformation describe-stack-events --stack-name PeeringExample --max-items 5 \\"
+            echo "# aws cloudformation describe-stack-events --stack-name Example-VPCPeeringConnection --max-items 5 \\"
             echo ">                                          --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \\"
             echo ">                                          --profile $profile --region $region --output table"
-            aws cloudformation describe-stack-events --stack-name PeeringExample --max-items 5 \
+            aws cloudformation describe-stack-events --stack-name Example-VPCPeeringConnection --max-items 5 \
                                                      --query 'StackEvents[].[LogicalResourceId,ResourceStatus,Timestamp]' \
                                                      --profile $profile --region $region --output table
 
-            status=$(aws cloudformation describe-stacks --stack-name PeeringExample \
+            status=$(aws cloudformation describe-stacks --stack-name Example-VPCPeeringConnection \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else
