@@ -544,6 +544,25 @@
       "Value" : { "Ref" : "BuildSubnetB" },
       "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-BuildSubnetB" }},
       "Condition" : "CreateMultiZoneSubnets"
+    },
+
+    "PublicRouteTable" : {
+      "Description" : "The Public RouteTable",
+      "Value" :  { "Ref" : "PublicRouteTable" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicRouteTable" }}
+    },
+
+    "PrivateRouteTableA" : {
+      "Description" : "The Private RouteTable in Availability Zone A",
+      "Value" :  { "Ref" : "PrivateRouteTableA" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableA" }}
+    },
+
+    "PrivateRouteTableB" : {
+      "Description" : "The Private RouteTable in Availability Zone B",
+      "Value" :  { "Ref" : "PrivateRouteTableB" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableB" }},
+      "Condition" : "CreateMultiZoneSubnets"
     }
   }
 }

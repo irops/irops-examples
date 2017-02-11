@@ -340,7 +340,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
                                                      ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                      ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
-                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \\"
+                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Build \
@@ -367,7 +367,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
                                                      ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                      ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
-                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \\"
+                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Build \

@@ -340,7 +340,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \
                                                      ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                                      ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \
-                                                     ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
+                                                     ParameterKey=IdentityVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Identity \
@@ -367,7 +367,7 @@ if [ $choice = y ]; then
                                         --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \
                                                      ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                                      ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \
-                                                     ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
+                                                     ParameterKey=IdentityVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Identity \
