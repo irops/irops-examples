@@ -32,19 +32,19 @@
 
   "Resources" : {
     "UserRole" : {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "RoleName": "User",
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "RoleName" : "User",
         "Path" : "/",
         "AssumeRolePolicyDocument" : {
           "Version" : "2012-10-17",
           "Statement" : [{
             "Effect" : "Allow",
             "Action" : [ "sts:AssumeRole" ],
-            "Principal" : { "Service": [ "ec2.amazonaws.com" ] },
+            "Principal" : { "Service" : [ "ec2.amazonaws.com" ]},
           }]
         },
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/ReadOnlyAccess" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/ReadOnlyAccess" ]
       }
     }
   },
@@ -53,7 +53,7 @@
     "UserRole" : {
       "Description" : "The UserRole Name",
       "Value" :  { "Ref" : "UserRole" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-UserRole" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-UserRole" }}
     }
   }
 }

@@ -202,6 +202,10 @@ $IROPS_HOME/core/bin/core-create-customsubscriptions-stack $options
 
 $IROPS_HOME/core/bin/core-create-standardbuckets-stack $options
 
+$IROPS_HOME/core/bin/core-create-billingalarms-stack $options
+
+$IROPS_HOME/core/bin/core-create-santabarbaracustomergateway-stack $options
+
 end=$(date +%s)
 
 echo

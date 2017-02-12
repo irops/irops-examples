@@ -245,7 +245,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Environment-VPC*.json' \\"
+    echo "            --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -253,11 +253,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Environment-VPC*.json' \\"
+    echo ">             --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Environment-VPC*.json' \
+                --exclude '*' --include 'Environment-VPC.json' --include 'Environment-VPC-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -286,8 +286,8 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -300,8 +300,8 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -330,8 +330,8 @@ else
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-            echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -343,8 +343,8 @@ else
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \
                                             --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                         ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
+                                                         ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -357,8 +357,8 @@ else
             echo ">                                 --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-            echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
+            echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -370,8 +370,8 @@ else
                                             --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \
                                             --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                         ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
+                                                         ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -441,6 +441,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-VPC \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

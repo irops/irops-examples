@@ -263,7 +263,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Identity-StandardUsers*.json' \\"
+    echo "            --exclude '*' --include 'Identity-StandardUsers.json' --include 'Identity-StandardUsers-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -271,11 +271,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Identity-StandardUsers*.json' \\"
+    echo ">             --exclude '*' --include 'Identity-StandardUsers.json' --include 'Identity-StandardUsers-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Identity-StandardUsers*.json' \
+                --exclude '*' --include 'Identity-StandardUsers.json' --include 'Identity-StandardUsers-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -447,6 +447,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name StandardUsers \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "CREATE_COMPLETE" -o "$status" = "CREATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

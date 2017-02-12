@@ -201,6 +201,7 @@ $IROPS_HOME/identity/bin/identity-create-standardgroups-stack $options
 
 $IROPS_HOME/identity/bin/identity-create-standardusers-stack $options
 $IROPS_HOME/identity/bin/identity-create-customusers-stack $options
+$IROPS_HOME/identity/bin/identity-create-reviewusers-stack $options
 
 $IROPS_HOME/identity/bin/identity-create-standardroles-stack $options
 

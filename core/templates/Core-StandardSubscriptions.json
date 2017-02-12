@@ -34,7 +34,7 @@
     "ManagersTopicManagersListEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
       "Properties" : {
-        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-ManagersTopic" }},
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub" : "${StandardTopicsStackName}-ManagersTopic" }},
         "Protocol" : "email",
         "Endpoint" : "irops-aws-team@hpe.com"
       }
@@ -43,7 +43,7 @@
     "DevelopersTopicDevelopersListEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
       "Properties" : {
-        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-DevelopersTopic" }},
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub" : "${StandardTopicsStackName}-DevelopersTopic" }},
         "Protocol" : "email",
         "Endpoint" : "irops-aws-team@hpe.com"
       }
@@ -52,7 +52,7 @@
     "UsersTopicUsersListEmailSubscription" : {
       "Type" : "AWS::SNS::Subscription",
       "Properties" : {
-        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub": "${StandardTopicsStackName}-UsersTopic" }},
+        "TopicArn" : { "Fn::ImportValue" : { "Fn::Sub" : "${StandardTopicsStackName}-UsersTopic" }},
         "Protocol" : "email",
         "Endpoint" : "irops-aws-team@hpe.com"
       }

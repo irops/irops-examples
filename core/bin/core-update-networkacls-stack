@@ -257,7 +257,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Core-NetworkAcls*.json' \\"
+    echo "            --exclude '*' --include 'Core-NetworkAcls.json' --include 'Core-NetworkAcls-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -265,11 +265,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Core-NetworkAcls*.json' \\"
+    echo ">             --exclude '*' --include 'Core-NetworkAcls.json' --include 'Core-NetworkAcls-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Core-NetworkAcls*.json' \
+                --exclude '*' --include 'Core-NetworkAcls.json' --include 'Core-NetworkAcls-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -297,7 +297,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -309,7 +308,6 @@ else
     echo "                                --template-body file://$templatesdir/Core-NetworkAcls.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Core-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -327,7 +325,6 @@ if [ $choice = y ]; then
         echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-        echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Core \\"
@@ -338,7 +335,6 @@ if [ $choice = y ]; then
                                         --template-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls.json \
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-NetworkAcls-StackPolicy.json \
                                         --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \
-                                                     ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Core \
@@ -350,7 +346,6 @@ if [ $choice = y ]; then
         echo ">                                 --template-body file://$templatesdir/Core-NetworkAcls.json \\"
         echo ">                                 --stack-policy-body file://$templatesdir/Core-NetworkAcls-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-        echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Core \\"
@@ -361,7 +356,6 @@ if [ $choice = y ]; then
                                         --template-body file://$templatesdir/Core-NetworkAcls.json \
                                         --stack-policy-body file://$templatesdir/Core-NetworkAcls-StackPolicy.json \
                                         --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \
-                                                     ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Core \
@@ -430,6 +424,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name Core-NetworkAcls \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

@@ -1,22 +1,22 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Environment-VPC Template. This creates the Environment VPC within an Environment Account. Multiple Environments can co-exist. The VPC can optionally be Multi-Zone. It can also optionally be Multi-NAT Gateway.",
+  "Description" : "Environment-VPC Template. This creates the Environment VPC within an Environment Account. Multiple Environments can co-exist. The VPC is always Multi-Zone. It can optionally be Multi-NAT Gateway. It can optionally have a VPN Gateway.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
       "ParameterGroups" : [
         {
           "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "EnvironmentName", "EnvironmentNetwork", "EnvironmentMultiZoneSubnets", "EnvironmentMultiZoneNatGateways" ]
+          "Parameters" : [ "EnvironmentName", "EnvironmentNetwork", "EnvironmentMultiZoneNatGateways", "EnvironmentVPNGateway" ]
         }
       ],
 
       "ParameterLabels" : {
         "EnvironmentName" : { "default" : "Environment Name" },
         "EnvironmentNetwork" : { "default" : "Environment Network" },
-        "EnvironmentMultiZoneSubnets" : { "default" : "Environment Multi-Zone Subnets" },
-        "EnvironmentMultiZoneNatGateway" : { "default" : "Environment Multi-Zone NAT Gateways" },
+        "EnvironmentMultiZoneNatGateways" : { "default" : "Environment Multi-Zone NAT Gateways" },
+        "EnvironmentVPNGateway" : { "default" : "Environment VPN Gateway" }
       }
     }
   },
@@ -34,20 +34,21 @@
       "Description" : "Environment VPC /16 Network",
       "Type" : "String",
       "Default" : "10.40.0.0/16",
-      "AllowedPattern": "10\\.(\\d{1,3})\\.0\\.0/16",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form 10.X.0.0/16."
+      "AllowedPattern" : "10\\.(\\d{1,3})\\.0\\.0/16",
+      "ConstraintDescription" : "must be a valid IP CIDR range of the form 10.X.0.0/16."
     },
 
-    "EnvironmentMultiZoneSubnets" : {
-      "Description" : "Create Subnets in multiple Availability Zones",
+    "EnvironmentMultiZoneNatGateways" : {
+      "Description" : "Create NAT Gateways in multiple Availability Zones",
       "Type" : "String",
       "Default" : "true",
       "AllowedValues" : [ "true", "false" ],
       "ConstraintDescription" : "must be either true or false."
     },
 
-    "EnvironmentMultiZoneNatGateways" : {
-      "Description" : "Create NAT Gateways in multiple Availability Zones",
+
+    "EnvironmentVPNGateway" : {
+      "Description" : "Create VPNGateway",
       "Type" : "String",
       "Default" : "true",
       "AllowedValues" : [ "true", "false" ],
@@ -125,8 +126,8 @@
   },
 
   "Conditions" : {
-    "CreateMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "EnvironmentMultiZoneSubnets" }, "true" ]},
-    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [ { "Ref" : "EnvironmentMultiZoneNatGateways" }, "true" ]}
+    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [{ "Ref" : "EnvironmentMultiZoneNatGateways" }, "true" ]},
+    "CreateVPNGateway" : { "Fn::Equals" : [{ "Ref" : "EnvironmentVPNGateway" }, "true" ]}
   },
 
   "Resources" : {
@@ -184,8 +185,7 @@
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicSubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "WebSubnetA" : {
@@ -213,8 +213,7 @@
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-WebSubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "ApplicationSubnetA" : {
@@ -242,8 +241,7 @@
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-ApplicationSubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "DatabaseSubnetA" : {
@@ -271,8 +269,7 @@
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-DatabaseSubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "QueueSubnetA" : {
@@ -300,8 +297,7 @@
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-QueueSubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "IdentitySubnetA" : {
@@ -324,13 +320,12 @@
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "EnvironmentNetwork" }]}]},
                                               { "Fn::FindInMap" : [ "SubnetMap", "Identity", "ZoneB" ]}]]},
-        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-IdentitySubnetB" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-IdentitySubnetB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "PublicRouteTable" : {
@@ -338,7 +333,7 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicRouteTable" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PublicRouteTable" }}
         ]
       }
     },
@@ -366,8 +361,7 @@
       "Properties" : {
         "SubnetId" : { "Ref" : "PublicSubnetB" },
         "RouteTableId" : { "Ref" : "PublicRouteTable" }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "WebSubnetARouteTableAssociation" : {
@@ -383,8 +377,7 @@
       "Properties" : {
         "SubnetId" : { "Ref" : "WebSubnetB" },
         "RouteTableId" : { "Ref" : "PublicRouteTable" }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "NatGatewayAEIP" : {
@@ -407,7 +400,7 @@
     "NatGatewayA" : {
       "Type" : "AWS::EC2::NatGateway",
       "Properties" : {
-        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayAEIP", "AllocationId" ] },
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayAEIP", "AllocationId" ]},
         "SubnetId" : { "Ref" : "PublicSubnetA" }
       }
     },
@@ -415,7 +408,7 @@
     "NatGatewayB" : {
       "Type" : "AWS::EC2::NatGateway",
       "Properties" : {
-        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayBEIP", "AllocationId" ] },
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayBEIP", "AllocationId" ]},
         "SubnetId" : { "Ref" : "PublicSubnetB" }
       },
       "Condition" : "CreateMultiZoneNatGateways"
@@ -426,7 +419,7 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateRouteTableA" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateRouteTableA" }}
         ]
       }
     },
@@ -477,10 +470,9 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateRouteTableB" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-PrivateRouteTableB" }}
         ]
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "PrivateDefaultRouteB" : {
@@ -488,9 +480,8 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "DestinationCidrBlock" : "0.0.0.0/0",
-        "NatGatewayId" : { "Fn::If" : [ "CreateMultiZoneNatGateways", { "Ref" : "NatGatewayB" }, { "Ref" : "NatGatewayA" } ] }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+        "NatGatewayId" : { "Fn::If" : [ "CreateMultiZoneNatGateways", { "Ref" : "NatGatewayB" }, { "Ref" : "NatGatewayA" }]}
+      }
     },
 
     "ApplicationSubnetBRouteTableAssociation" : {
@@ -498,8 +489,7 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "SubnetId" : { "Ref" : "ApplicationSubnetB" }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "DatabaseSubnetBRouteTableAssociation" : {
@@ -507,8 +497,7 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "SubnetId" : { "Ref" : "DatabaseSubnetB" }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "QueueSubnetBRouteTableAssociation" : {
@@ -516,8 +505,7 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "SubnetId" : { "Ref" : "QueueSubnetB" }
-      },
-      "Condition" : "CreateMultiZoneSubnets"
+      }
     },
 
     "IdentitySubnetBRouteTableAssociation" : {
@@ -525,8 +513,37 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "SubnetId" : { "Ref" : "IdentitySubnetB" }
+      }
+    },
+
+    "VPNGateway" : {
+      "Type" : "AWS::EC2::VPNGateway",
+      "Properties" : {
+        "Type" : "ipsec.1",
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-VPNGateway" }}
+        ]
       },
-      "Condition" : "CreateMultiZoneSubnets"
+      "Condition" : "CreateVPNGateway"
+    },
+
+    "VPNGatewayAttachment" : {
+      "Type" : "AWS::EC2::VPCGatewayAttachment",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "VpnGatewayId" : { "Ref" : "VPNGateway" }
+      },
+      "Condition" : "CreateVPNGateway"
+    },
+
+    "VPNGatewayRoutePropagation" : {
+      "Type" : "AWS::EC2::VPNGatewayRoutePropagation",
+      "Properties" : {
+        "VpnGatewayId" : { "Ref" : "VPNGateway" },
+        "RouteTableIds" : [{ "Ref" : "PublicRouteTable" }, { "Ref" : "PrivateRouteTableA" }, { "Ref" : "PrivateRouteTableB" }]
+      },
+      "Condition" : "CreateVPNGateway",
+      "DependsOn" : "VPNGateway"
     }
   },
 
@@ -534,85 +551,110 @@
     "VPC" : {
       "Description" : "The VPC",
       "Value" :  { "Ref" : "VPC" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-VPC" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPC" }}
+    },
+
+    "VPCNetwork" : {
+      "Description" : "The VPC Network",
+      "Value" :  { "Fn::GetAtt" : [ "VPC", "CidrBlock" ]},
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPCNetwork" }}
+    },
+
+    "VPNGateway" : {
+      "Description" : "The VPNGateway",
+      "Value" :  { "Ref" : "VPNGateway" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPNGateway" }},
+      "Condition" : "CreateVPNGateway"
     },
 
     "PublicSubnetA" : {
       "Description" : "The Public Subnet in Availability Zone A",
       "Value" :  { "Ref" : "PublicSubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-PublicSubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicSubnetA" }}
     },
 
     "PublicSubnetB" : {
       "Description" : "The Public Subnet in Availability Zone B",
       "Value" :  { "Ref" : "PublicSubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-PublicSubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicSubnetB" }}
     },
 
     "WebSubnetA" : {
       "Description" : "The Web Subnet in Availability Zone A",
       "Value" :  { "Ref" : "WebSubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-WebSubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-WebSubnetA" }}
     },
 
     "WebSubnetB" : {
       "Description" : "The Web Subnet in Availability Zone B",
       "Value" :  { "Ref" : "WebSubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-WebSubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-WebSubnetB" }}
     },
 
     "ApplicationSubnetA" : {
       "Description" : "The Application Subnet in Availability Zone A",
       "Value" :  { "Ref" : "ApplicationSubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ApplicationSubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-ApplicationSubnetA" }}
     },
 
     "ApplicationSubnetB" : {
       "Description" : "The Application Subnet in Availability Zone B",
       "Value" :  { "Ref" : "ApplicationSubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ApplicationSubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-ApplicationSubnetB" }}
     },
 
     "DatabaseSubnetA" : {
       "Description" : "The Database Subnet in Availability Zone A",
       "Value" :  { "Ref" : "DatabaseSubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DatabaseSubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-DatabaseSubnetA" }}
     },
 
     "DatabaseSubnetB" : {
       "Description" : "The Database Subnet in Availability Zone B",
       "Value" :  { "Ref" : "DatabaseSubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DatabaseSubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-DatabaseSubnetB" }}
     },
 
     "QueueSubnetA" : {
       "Description" : "The Queue Subnet in Availability Zone A",
       "Value" :  { "Ref" : "QueueSubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-QueueSubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-QueueSubnetA" }}
     },
 
     "QueueSubnetB" : {
       "Description" : "The Queue Subnet in Availability Zone B",
       "Value" :  { "Ref" : "QueueSubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-QueueSubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-QueueSubnetB" }}
     },
 
     "IdentitySubnetA" : {
       "Description" : "The Identity Subnet in Availability Zone A",
       "Value" :  { "Ref" : "IdentitySubnetA" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-IdentitySubnetA" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-IdentitySubnetA" }}
     },
 
     "IdentitySubnetB" : {
       "Description" : "The Identity Subnet in Availability Zone B",
       "Value" :  { "Ref" : "IdentitySubnetB" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-IdentitySubnetB" }},
-      "Condition" : "CreateMultiZoneSubnets"
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-IdentitySubnetB" }}
+    },
+
+    "PublicRouteTable" : {
+      "Description" : "The Public RouteTable",
+      "Value" :  { "Ref" : "PublicRouteTable" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicRouteTable" }}
+    },
+
+    "PrivateRouteTableA" : {
+      "Description" : "The Private RouteTable in Availability Zone A",
+      "Value" :  { "Ref" : "PrivateRouteTableA" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableA" }}
+    },
+
+    "PrivateRouteTableB" : {
+      "Description" : "The Private RouteTable in Availability Zone B",
+      "Value" :  { "Ref" : "PrivateRouteTableB" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableB" }}
     }
   }
 }

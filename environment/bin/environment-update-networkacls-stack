@@ -257,7 +257,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Environment-NetworkAcls*.json' \\"
+    echo "            --exclude '*' --include 'Environment-NetworkAcls.json' --include 'Environment-NetworkAcls-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -265,11 +265,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Environment-NetworkAcls*.json' \\"
+    echo ">             --exclude '*' --include 'Environment-NetworkAcls.json' --include 'Environment-NetworkAcls-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Environment-NetworkAcls*.json' \
+                --exclude '*' --include 'Environment-NetworkAcls.json' --include 'Environment-NetworkAcls-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -298,7 +298,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
     echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -311,7 +310,6 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
     echo "                                             ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -330,7 +328,6 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
         echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -342,7 +339,6 @@ if [ $choice = y ]; then
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-NetworkAcls-StackPolicy.json \
                                         --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \
                                                      ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
-                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -355,7 +351,6 @@ if [ $choice = y ]; then
         echo ">                                 --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \\"
         echo ">                                              ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
-        echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=$ENVIRONMENT_NAME \\"
@@ -367,7 +362,6 @@ if [ $choice = y ]; then
                                         --stack-policy-body file://$templatesdir/Environment-NetworkAcls-StackPolicy.json \
                                         --parameters ParameterKey=EnvironmentVPCStackName,ParameterValue=$ENVIRONMENT_NAME-VPC \
                                                      ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
-                                                     ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=$ENVIRONMENT_NAME \
@@ -436,6 +430,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT_NAME-NetworkAcls \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

@@ -9,6 +9,10 @@ export IROPS_HOME=~/Workspaces/irops/irops-examples
 export COMPANY_CODE=demo
 export COMPANY_NAME="Demo"
 
+# Location (match AWS_DEFAULT_REGION below)
+export LOCATION_CODE=uw2
+export LOCATION_NAME="US-West-2"
+
 # System
 export SYSTEM_CODE=irops
 export SYSTEM_NAME="IROPS"
@@ -17,22 +21,25 @@ export SYSTEM_NAME="IROPS"
 export ENVIRONMENT_CODE=p
 export ENVIRONMENT_NAME="Production"
 export ENVIRONMENT_NETWORK=10.40.0.0/16
-export ENVIRONMENT_HA_SUBNETS=true
 export ENVIRONMENT_HA_NAT_GATEWAYS=true
 
 # Core
 export CORE_CODE=c
 export CORE_NAME="Core"
 export CORE_NETWORK=10.46.0.0/16
-export CORE_HA_SUBNETS=true
 export CORE_HA_NAT_GATEWAYS=false
 
 # Build
 export BUILD_CODE=b
-export BUIDL_NAME="Build"
+export BUILD_NAME="Build"
 export BUILD_NETWORK=10.47.0.0/16
-export BUILD_HA_SUBNETS=true
 export BUILD_HA_NAT_GATEWAYS=false
+
+# Identity
+export IDENTITY_CODE=i
+export IDENTITY_NAME="Identity"
+export IDENTITY_NETWORK=10.255.0.0/16
+export IDENTITY_HA_NAT_GATEWAYS=false
 
 # Region
 export AWS_DEFAULT_REGION=us-west-2
@@ -48,8 +55,8 @@ export AWS_USER_NAME=$USER
 export AWS_DEFAULT_PROFILE=$AWS_ACCOUNT_ALIAS-$AWS_USER_NAME
 
 # Keys
-export AWS_SSH_KEY_ID=demo
-export AWS_SSH_KEY_FILE=${HOME}/.ssh/irops_${AWS_SSH_KEY_ID}_id_rsa
+export AWS_KEY_NAME=demo
+export AWS_KEY_FILE=${HOME}/.ssh/irops_${AWS_KEY_NAME}_id_rsa
 
 # Notification
 export SNS_ADMINISTRATOR_TOPIC="arn:aws:sns:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_NUMBER}:Administrators"
