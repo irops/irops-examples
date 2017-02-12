@@ -35,6 +35,13 @@ user=${AWS_USER_NAME:-administrator}
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
 templatespath=/core
 
+build_vpc_stack_name=Build-VPC
+identity_vpc_stack_name=Identity-VPC
+production_vpc_stack_name=Production-VPC
+staging_vpc_stack_name=Staging-VPC
+qa_vpc_stack_name=QA-VPC
+development_vpc_stack_name=Development-VPC
+
 
 #  2. Define functions
 
@@ -201,6 +208,49 @@ if ! aws cloudformation describe-stacks --stack-name Core-VPCPeeringConnections 
     exit 3
 fi
 
+if ! aws cloudformation describe-stacks --stack-name Build-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - Build-VPC Stack does not exist!"
+    unset build_vpc_stack_name
+    sleep 1
+fi
+
+if ! aws cloudformation describe-stacks --stack-name Identity-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - Identity-VPC Stack does not exist!"
+    unset identity_vpc_stack_name
+    sleep 1
+fi
+
+if ! aws cloudformation describe-stacks --stack-name Production-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - Production-VPC Stack does not exist!"
+    unset production_vpc_stack_name
+    sleep 1
+fi
+
+if ! aws cloudformation describe-stacks --stack-name Staging-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - Staging-VPC Stack does not exist!"
+    unset staging_vpc_stack_name
+    sleep 1
+fi
+
+if ! aws cloudformation describe-stacks --stack-name QA-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - QA-VPC Stack does not exist!"
+    unset qa_vpc_stack_name
+    sleep 1
+fi
+
+if ! aws cloudformation describe-stacks --stack-name Development-VPC \
+                                        --profile $profile --region $region --output text &> /dev/null; then
+    echo "Stack dependency missing - Development-VPC Stack does not exist!"
+    unset development_vpc_stack_name
+    sleep 1
+fi
+
+
 # Prevent certain environment variables from breaking commands
 unset AWS_DEFAULT_PROFILE
 unset AWS_CREDENTIAL_FILE
@@ -297,7 +347,12 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
+    echo "                                             ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \\"
+    echo "                                             ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \\"
+    echo "                                             ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \\"
+    echo "                                             ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \\"
+    echo "                                             ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \\"
+    echo "                                             ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -309,7 +364,12 @@ else
     echo "                                --template-body file://$templatesdir/Core-VPCPeeringConnections.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Core-VPCPeeringConnections-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
+    echo "                                             ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \\"
+    echo "                                             ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \\"
+    echo "                                             ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \\"
+    echo "                                             ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \\"
+    echo "                                             ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \\"
+    echo "                                             ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Core \\"
@@ -327,7 +387,12 @@ if [ $choice = y ]; then
         echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-        echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \\"
+        echo ">                                              ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \\"
+        echo ">                                              ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \\"
+        echo ">                                              ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \\"
+        echo ">                                              ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \\"
+        echo ">                                              ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Core \\"
@@ -338,7 +403,12 @@ if [ $choice = y ]; then
                                         --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections.json \
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPCPeeringConnections-StackPolicy.json \
                                         --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \
-                                                     ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
+                                                     ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \
+                                                     ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \
+                                                     ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \
+                                                     ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \
+                                                     ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \
+                                                     ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Core \
@@ -350,7 +420,12 @@ if [ $choice = y ]; then
         echo ">                                 --template-body file://$templatesdir/Core-VPCPeeringConnections.json \\"
         echo ">                                 --stack-policy-body file://$templatesdir/Core-VPCPeeringConnections-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \\"
-        echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
+        echo ">                                              ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \\"
+        echo ">                                              ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \\"
+        echo ">                                              ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \\"
+        echo ">                                              ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \\"
+        echo ">                                              ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \\"
+        echo ">                                              ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Core \\"
@@ -361,7 +436,12 @@ if [ $choice = y ]; then
                                         --template-body file://$templatesdir/Core-VPCPeeringConnections.json \
                                         --stack-policy-body file://$templatesdir/Core-VPCPeeringConnections-StackPolicy.json \
                                         --parameters ParameterKey=CoreVPCStackName,ParameterValue=Core-VPC \
-                                                     ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
+                                                     ParameterKey=BuildVPCStackName,ParameterValue=$build_vpc_stack_name \
+                                                     ParameterKey=IdentityVPCStackName,ParameterValue=$identity_vpc_stack_name \
+                                                     ParameterKey=ProductionVPCStackName,ParameterValue=$production_vpc_stack_name \
+                                                     ParameterKey=StagingVPCStackName,ParameterValue=$staging_vpc_stack_name \
+                                                     ParameterKey=QAVPCStackName,ParameterValue=$qa_vpc_stack_name \
+                                                     ParameterKey=DevelopmentVPCStackName,ParameterValue=$development_vpc_stack_name \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Core \
