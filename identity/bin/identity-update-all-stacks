@@ -201,6 +201,7 @@ $IROPS_HOME/identity/bin/identity-update-standardgroups-stack $options
 
 $IROPS_HOME/identity/bin/identity-update-standardusers-stack $options
 $IROPS_HOME/identity/bin/identity-update-customusers-stack $options
+$IROPS_HOME/identity/bin/identity-update-reviewusers-stack $options
 
 $IROPS_HOME/identity/bin/identity-update-standardroles-stack $options
 

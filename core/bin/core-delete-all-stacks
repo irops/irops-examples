@@ -194,6 +194,9 @@ unset EC2_CERT
 #  5. Run All Scripts in Order
 
 start=$(date +%s)
+$IROPS_HOME/core/bin/core-delete-santabarbaracustomergateway-stack $options
+
+$IROPS_HOME/core/bin/core-delete-billingalarms-stack $options
 
 $IROPS_HOME/core/bin/core-delete-standardbuckets-stack $options
 

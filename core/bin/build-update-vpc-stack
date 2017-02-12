@@ -33,7 +33,7 @@ account=${AWS_ACCOUNT_ALIAS:-irops}
 user=${AWS_USER_NAME:-administrator}
 
 templatesbucket=${AWS_TEMPLATES_BUCKET:-templates-$account}
-templatespath=/build
+templatespath=/core
 
 
 #  2. Define functions
@@ -251,7 +251,7 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "aws s3 sync $templatesdir \\"
     echo "            s3://$templatesbucket$templatespath \\"
-    echo "            --exclude '*' --include 'Build-VPC*.json' \\"
+    echo "            --exclude '*' --include 'Build-VPC.json' --include 'Build-VPC-StackPolicy.json' \\"
     echo "            --profile $profile --region $region --output table"
 
     next 50
@@ -259,11 +259,11 @@ if [ ! -z $templatesbucket ]; then
     echo
     echo "# aws s3 sync $templatesdir \\"
     echo ">             s3://$templatesbucket$templatespath \\"
-    echo ">             --exclude '*' --include 'Build-VPC*.json' \\"
+    echo ">             --exclude '*' --include 'Build-VPC.json' --include 'Build-VPC-StackPolicy.json' \\"
     echo ">             --profile $profile --region $region --output table"
     aws s3 sync $templatesdir \
                 s3://$templatesbucket$templatespath \
-                --exclude '*' --include 'Build-VPC*.json' \
+                --exclude '*' --include 'Build-VPC.json' --include 'Build-VPC-StackPolicy.json' \
                 --profile $profile --region $region --output table
 
     next 50
@@ -291,8 +291,8 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=BuildVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Build \\"
@@ -304,8 +304,8 @@ else
     echo "                                --template-body file://$templatesdir/Build-VPC.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
+    echo "                                             ParameterKey=BuildVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Build \\"
@@ -320,11 +320,11 @@ if [ $choice = y ]; then
     echo
     if [ ! -z $templatesbucket ]; then
         echo "# aws cloudformation update-stack --stack-name Build-VPC \\"
-        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-$type.json \\"
+        echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-        echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
         echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
+        echo ">                                              ParameterKey=BuildVPNGateway,ParameterValue=false \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Build \\"
@@ -335,8 +335,8 @@ if [ $choice = y ]; then
                                         --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \
                                         --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
-                                                     ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                      ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
+                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Build \
@@ -348,8 +348,8 @@ if [ $choice = y ]; then
         echo ">                                 --template-body file://$templatesdir/Build-VPC.json \\"
         echo ">                                 --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-        echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
         echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
+        echo ">                                              ParameterKey=BuildVPNGateway,ParameterValue=false \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
         echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
         echo ">                                        Key=Environment,Value=Build \\"
@@ -360,8 +360,8 @@ if [ $choice = y ]; then
                                         --template-body file://$templatesdir/Build-VPC.json \
                                         --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \
                                         --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
-                                                     ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                      ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
+                                                     ParameterKey=BuildVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
                                                Key=System,Value=$SYSTEM_NAME \
                                                Key=Environment,Value=Build \
@@ -430,6 +430,7 @@ else
             status=$(aws cloudformation describe-stacks --stack-name Build-VPC \
                                                         --query 'Stacks[].StackStatus' \
                                                         --profile $profile --region $region --output text 2> /dev/null)
+            RC=$?
             if [ -z "$status" -o "$status" = "UPDATE_COMPLETE" -o "$status" = "UPDATE_FAILED" -o "$status" = "ROLLBACK_COMPLETE" ]; then
                 break
             else

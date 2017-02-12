@@ -3,13 +3,13 @@
     {
       "Effect" : "Allow",
       "Action" : "Update:Modify",
-      "Principal": "*",
+      "Principal" : "*",
       "Resource" : "*"
     },
     {
       "Effect" : "Deny",
       "Action" : [ "Update:Replace", "Update:Delete" ],
-      "Principal": "*",
+      "Principal" : "*",
       "Resource" : "*"
     }
   ]

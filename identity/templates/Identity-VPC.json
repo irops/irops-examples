@@ -1,0 +1,364 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Identity-VPC Template. This creates the Identity VPC within the Identity Account. Only a single Identity can exist. The VPC is always Multi-Zone. It can optionally be Multi-NAT Gateway. It can optionally have a VPN Gateway.",
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "VPC Configuration" },
+          "Parameters" : [ "IdentityNetwork", "IdentityMultiZoneNatGateways", "IdentityVPNGateway" ]
+        }
+      ],
+
+      "ParameterLabels" : {
+        "IdentityNetwork" : { "default" : "Identity Network" },
+        "IdentityMultiZoneNatGateways" : { "default" : "Identity Multi-Zone NAT Gateways" },
+        "IdentityVPNGateway" : { "default" : "Identity VPN Gateway" }
+      }
+    }
+  },
+
+  "Parameters" : {
+    "IdentityNetwork" : {
+      "Description" : "Identity VPC /16 Network",
+      "Type" : "String",
+      "Default" : "10.255.0.0/16",
+      "AllowedPattern" : "10\\.(\\d{1,3})\\.0\\.0/16",
+      "ConstraintDescription" : "must be a valid IP CIDR range of the form 10.X.0.0/16."
+    },
+
+    "IdentityMultiZoneNatGateways" : {
+      "Description" : "Create NAT Gateways in multiple Availability Zones",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    },
+
+    "IdentityVPNGateway" : {
+      "Description" : "Create VPNGateway",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    }
+  },
+
+  "Mappings" : {
+    "SubnetMap" : {
+      "Public"        : { "ZoneA" :  "0.0/24", "ZoneB" :  "64.0/24", "ZoneC" : "128.0/24", "ZoneD" : "192.0/24" },
+      "Identity"      : { "ZoneA" : "60.0/24", "ZoneB" : "124.0/24", "ZoneC" : "188.0/24", "ZoneD" : "252.0/24" }
+    }
+  },
+
+  "Conditions" : {
+    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [{ "Ref" : "IdentityMultiZoneNatGateways" }, "true" ]},
+    "CreateVPNGateway" : { "Fn::Equals" : [{ "Ref" : "IdentityVPNGateway" }, "true" ]}
+  },
+
+  "Resources" : {
+    "VPC" : {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "CidrBlock" : { "Ref" : "IdentityNetwork" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "Identity-VPC" }}
+        ]
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-InternetGateway" }
+        ]
+      }
+    },
+
+    "InternetGatewayAttachment" : {
+       "Type" : "AWS::EC2::VPCGatewayAttachment",
+       "Properties" : {
+         "VpcId" : { "Ref" : "VPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
+       }
+    },
+
+    "PublicSubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "IdentityNetwork" }]}]},
+                                              { "Fn::FindInMap" : [ "SubnetMap", "Public", "ZoneA" ]}]]},
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
+        "MapPublicIpOnLaunch" : "true",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-PublicSubnetA" }
+        ]
+      }
+    },
+
+    "PublicSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "IdentityNetwork" }]}]},
+                                              { "Fn::FindInMap" : [ "SubnetMap", "Public", "ZoneB" ]}]]},
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
+        "MapPublicIpOnLaunch" : "true",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-PublicSubnetB" }
+        ]
+      }
+    },
+
+    "IdentitySubnetA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "IdentityNetwork" }]}]},
+                                              { "Fn::FindInMap" : [ "SubnetMap", "Identity", "ZoneA" ]}]]},
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : "" }]},
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-IdentitySubnetA" }
+        ]
+      }
+    },
+
+    "IdentitySubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "IdentityNetwork" }]}]},
+                                              { "Fn::FindInMap" : [ "SubnetMap", "Identity", "ZoneB" ]}]]},
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
+        "MapPublicIpOnLaunch" : "false",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-IdentitySubnetB" }
+        ]
+      }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-PublicRouteTable" }
+        ]
+      }
+    },
+
+    "PublicDefaultRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicSubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetA" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnetB" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "NatGatewayAEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "Domain" : "vpc"
+      }
+    },
+
+    "NatGatewayBEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "DependsOn" : "InternetGatewayAttachment",
+      "Properties" : {
+        "Domain" : "vpc"
+      },
+      "Condition" : "CreateMultiZoneNatGateways"
+    },
+
+    "NatGatewayA" : {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayAEIP", "AllocationId" ]},
+        "SubnetId" : { "Ref" : "PublicSubnetA" }
+      }
+    },
+
+    "NatGatewayB" : {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" : { "Fn::GetAtt" : [ "NatGatewayBEIP", "AllocationId" ]},
+        "SubnetId" : { "Ref" : "PublicSubnetB" }
+      },
+      "Condition" : "CreateMultiZoneNatGateways"
+    },
+
+    "PrivateRouteTableA" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-PrivateRouteTableA" }
+        ]
+      }
+    },
+
+    "PrivateDefaultRouteA" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "NatGatewayId" : { "Ref" : "NatGatewayA" }
+      }
+    },
+
+    "IdentitySubnetARouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableA" },
+        "SubnetId" : { "Ref" : "IdentitySubnetA" }
+      }
+    },
+
+    "PrivateRouteTableB" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-PrivateRouteTableB" }
+        ]
+      }
+    },
+
+    "PrivateDefaultRouteB" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "NatGatewayId" : { "Fn::If" : [ "CreateMultiZoneNatGateways", { "Ref" : "NatGatewayB" }, { "Ref" : "NatGatewayA" }]}
+      }
+    },
+
+    "IdentitySubnetBRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
+        "SubnetId" : { "Ref" : "IdentitySubnetB" }
+      }
+    },
+
+    "VPNGateway" : {
+      "Type" : "AWS::EC2::VPNGateway",
+      "Properties" : {
+        "Type" : "ipsec.1",
+        "Tags" : [
+          { "Key" : "Name", "Value" : "Identity-VPNGateway" }
+        ]
+      },
+      "Condition" : "CreateVPNGateway"
+    },
+
+    "VPNGatewayAttachment" : {
+      "Type" : "AWS::EC2::VPCGatewayAttachment",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "VpnGatewayId" : { "Ref" : "VPNGateway" }
+      },
+      "Condition" : "CreateVPNGateway"
+    },
+
+    "VPNGatewayRoutePropagation" : {
+      "Type" : "AWS::EC2::VPNGatewayRoutePropagation",
+      "Properties" : {
+        "VpnGatewayId" : { "Ref" : "VPNGateway" },
+        "RouteTableIds" : [{ "Ref" : "PublicRouteTable" }, { "Ref" : "PrivateRouteTableA" }, { "Ref" : "PrivateRouteTableB" }]
+      },
+      "Condition" : "CreateVPNGateway",
+      "DependsOn" : "VPNGateway"
+    }
+  },
+
+  "Outputs" : {
+    "VPC" : {
+      "Description" : "The VPC",
+      "Value" : { "Ref" : "VPC" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPC" }}
+    },
+
+    "VPCNetwork" : {
+      "Description" : "The VPC Network",
+      "Value" :  { "Fn::GetAtt" : [ "VPC", "CidrBlock" ]},
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPCNetwork" }}
+    },
+
+    "VPNGateway" : {
+      "Description" : "The VPNGateway",
+      "Value" :  { "Ref" : "VPNGateway" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-VPNGateway" }},
+      "Condition" : "CreateVPNGateway"
+    },
+
+    "PublicSubnetA" : {
+      "Description" : "The Public Subnet in Availability Zone A",
+      "Value" : { "Ref" : "PublicSubnetA" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicSubnetA" }}
+    },
+
+    "PublicSubnetB" : {
+      "Description" : "The Public Subnet in Availability Zone B",
+      "Value" : { "Ref" : "PublicSubnetB" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicSubnetB" }}
+    },
+
+    "IdentitySubnetA" : {
+      "Description" : "The Identity Subnet in Availability Zone A",
+      "Value" : { "Ref" : "IdentitySubnetA" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-IdentitySubnetA" }}
+    },
+
+    "IdentitySubnetB" : {
+      "Description" : "The Identity Subnet in Availability Zone B",
+      "Value" : { "Ref" : "IdentitySubnetB" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-IdentitySubnetB" }}
+    },
+
+    "PublicRouteTable" : {
+      "Description" : "The Public RouteTable",
+      "Value" :  { "Ref" : "PublicRouteTable" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PublicRouteTable" }}
+    },
+
+    "PrivateRouteTableA" : {
+      "Description" : "The Private RouteTable in Availability Zone A",
+      "Value" :  { "Ref" : "PrivateRouteTableA" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableA" }}
+    },
+
+    "PrivateRouteTableB" : {
+      "Description" : "The Private RouteTable in Availability Zone B",
+      "Value" :  { "Ref" : "PrivateRouteTableB" },
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-PrivateRouteTableB" }}
+    }
+  }
+}
