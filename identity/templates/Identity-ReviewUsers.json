@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Identity-CustomUsers Template. This creates Custom IAM Users within the Identity Account.",
+  "Description" : "Identity-ReviewUsers Template. This creates Review IAM Users within the Identity Account.",
 
   "Metadata" : {
     "AWS::CloudFormation::Interface" : {
@@ -42,100 +42,55 @@
   },
 
   "Resources" : {
-    "mcrawfordUser" : {
+    "lwadeUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "mcrawford",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
-      }
-    },
-
-    "kmccutchenUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "kmccutchen",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
-      }
-    },
-
-    "gveazeyUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "gveazey",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-AdministratorsGroup" }} ]
-      }
-    },
-
-    "vkamalakaranUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "vkamalakaran",
+        "UserName": "lwade",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     },
 
-    "nshethUser" : {
+    "mheleniusUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "nsheth",
+        "UserName": "mhelenius",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     },
 
-    "claneUser" : {
+    "nliechtyUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "clane",
+        "UserName": "nliechty",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     },
 
-    "cbradenUser" : {
+    "dmccueUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "cbraden",
+        "UserName": "dmccue",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     },
 
-    "mgowdaUser" : {
+    "jmilleUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "mgowda",
+        "UserName": "jmille",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
     },
 
-    "geverettUser" : {
+    "bthomasonUser" : {
       "Type": "AWS::IAM::User",
       "Properties": {
-        "UserName": "geverett",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
-      }
-    },
-
-    "kkempelUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "kkempel",
-        "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
-      }
-    },
-
-    "jharvenUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "jharven",
+        "UserName": "bthomason",
         "Path" : "/",
         "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
       }
