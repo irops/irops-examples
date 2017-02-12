@@ -43,56 +43,56 @@
 
   "Resources" : {
     "lwadeUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "lwade",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "lwade",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     },
 
     "mheleniusUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "mhelenius",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "mhelenius",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     },
 
     "nliechtyUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "nliechty",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "nliechty",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     },
 
     "dmccueUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "dmccue",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "dmccue",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     },
 
     "jmilleUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "jmille",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "jmille",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     },
 
     "bthomasonUser" : {
-      "Type": "AWS::IAM::User",
-      "Properties": {
-        "UserName": "bthomason",
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "UserName" : "bthomason",
         "Path" : "/",
-        "Groups": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardGroupsStackName}-UsersGroup" }} ]
+        "Groups" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardGroupsStackName}-UsersGroup" }}]
       }
     }
   }

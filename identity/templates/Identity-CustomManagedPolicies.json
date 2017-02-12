@@ -2,30 +2,30 @@ Here's an example of a policy to allow a subset of servers to be restarted.
 From: https://aws.amazon.com/blogs/security/resource-level-permissions-for-ec2-controlling-management-access-on-specific-instances/
 
 {
-  "Version": "2012-10-17",
-  "Statement": [
+  "Version" : "2012-10-17",
+  "Statement" : [
     {
-      "Action": [
+      "Action" : [
         "ec2:StartInstances",
         "ec2:StopInstances",	  
         "ec2:RebootInstances",
 	"ec2:TerminateInstances"
       ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:ResourceTag/critical":"true"
+      "Condition" : {
+        "StringEquals" : {
+          "ec2:ResourceTag/critical" :"true"
         },
-        "NumericLessThan": {
-          "aws:MultiFactorAuthAge": "900"
+        "NumericLessThan" : {
+          "aws:MultiFactorAuthAge" : "900"
         },
-        "IpAddress": {
-          "aws:SourceIp": "xxx.xxx.xxx.xxx/24"
+        "IpAddress" : {
+          "aws:SourceIp" : "xxx.xxx.xxx.xxx/24"
         }
       },
-      "Resource": [
+      "Resource" : [
         "arn:aws:ec2:your_region:your_account_ID:instance/*"
       ],
-      "Effect": "Allow"
+      "Effect" : "Allow"
     }
   ]
 }

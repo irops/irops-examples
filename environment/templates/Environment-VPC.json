@@ -126,8 +126,8 @@
   },
 
   "Conditions" : {
-    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [ { "Ref" : "EnvironmentMultiZoneNatGateways" }, "true" ]},
-    "CreateVPNGateway" : { "Fn::Equals" : [ { "Ref" : "EnvironmentVPNGateway" }, "true" ]}
+    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [{ "Ref" : "EnvironmentMultiZoneNatGateways" }, "true" ]},
+    "CreateVPNGateway" : { "Fn::Equals" : [{ "Ref" : "EnvironmentVPNGateway" }, "true" ]}
   },
 
   "Resources" : {
@@ -320,7 +320,7 @@
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Fn::Join" : [ ".", [ "10", { "Fn::Select" : [ "1", { "Fn::Split" : [ ".", { "Ref" : "EnvironmentNetwork" }]}]},
                                               { "Fn::FindInMap" : [ "SubnetMap", "Identity", "ZoneB" ]}]]},
-        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" } ] },
+        "AvailabilityZone" : { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }]},
         "MapPublicIpOnLaunch" : "false",
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Sub" : "${EnvironmentName}-IdentitySubnetB" }}
@@ -480,7 +480,7 @@
       "Properties" : {
         "RouteTableId" : { "Ref" : "PrivateRouteTableB" },
         "DestinationCidrBlock" : "0.0.0.0/0",
-        "NatGatewayId" : { "Fn::If" : [ "CreateMultiZoneNatGateways", { "Ref" : "NatGatewayB" }, { "Ref" : "NatGatewayA" } ] }
+        "NatGatewayId" : { "Fn::If" : [ "CreateMultiZoneNatGateways", { "Ref" : "NatGatewayB" }, { "Ref" : "NatGatewayA" }]}
       }
     },
 

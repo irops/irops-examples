@@ -59,7 +59,7 @@
         "BgpAsn" : { "Ref" : "CustomerGatewayBgpAsn" },
         "IpAddress" : { "Ref" : "CustomerGatewayIpAddress" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CustomerGatewayName}CustomerGateway" } }
+          { "Key" : "Name", "Value" : { "Fn::Sub" : "${CustomerGatewayName}CustomerGateway" }}
         ]
       }
     }
@@ -69,7 +69,7 @@
     "CustomerGateway" : {
       "Description" : "The CustomerGateway",
       "Value" :  { "Ref" : "CustomerGateway" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-CustomerGateway" } }
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-CustomerGateway" }}
     }
   }
 }

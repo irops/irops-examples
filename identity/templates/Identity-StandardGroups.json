@@ -32,65 +32,65 @@
 
   "Resources" : {
     "AdministratorsGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "Administrators",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "Administrators",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/AdministratorAccess" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/AdministratorAccess" ]
       }
     },
 
     "AdministratorsWithoutBillingGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "AdministratorsWithoutBilling",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "AdministratorsWithoutBilling",
         "Path" : "/",
-        "ManagedPolicyArns": [ { "Fn::ImportValue" : { "Fn::Sub": "${StandardManagedPoliciesStackName}-AdministratorAccessWithoutBilling" }} ]
+        "ManagedPolicyArns" : [{ "Fn::ImportValue" : { "Fn::Sub" : "${StandardManagedPoliciesStackName}-AdministratorAccessWithoutBilling" }}]
       }
     },
 
     "NetworkAdministratorsGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "NetworkAdministrators",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "NetworkAdministrators",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/job-function/NetworkAdministrator" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/job-function/NetworkAdministrator" ]
       }
     },
 
     "SystemAdministratorsGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "SystemAdministrators",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "SystemAdministrators",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/job-function/SystemAdministrator" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/job-function/SystemAdministrator" ]
       }
     },
 
     "DatabaseAdministratorsGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "DatabaseAdministrators",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "DatabaseAdministrators",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/job-function/DatabaseAdministrator" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/job-function/DatabaseAdministrator" ]
       }
     },
 
     "DevelopersGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "Developers",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "Developers",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/PowerUserAccess" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/PowerUserAccess" ]
       }
     },
 
     "UsersGroup" : {
-      "Type": "AWS::IAM::Group",
-      "Properties": {
-        "GroupName": "Users",
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "GroupName" : "Users",
         "Path" : "/",
-        "ManagedPolicyArns": [ "arn:aws:iam::aws:policy/ReadOnlyAccess" ]
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/ReadOnlyAccess" ]
       }
     }
   },
@@ -99,43 +99,43 @@
     "AdministratorsGroup" : {
       "Description" : "The AdministratorsGroup Name",
       "Value" :  { "Ref" : "AdministratorsGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorsGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-AdministratorsGroup" }}
     },
 
     "AdministratorsWithoutBillingGroup" : {
       "Description" : "The AdministratorsWithoutBillingGroup Name",
       "Value" :  { "Ref" : "AdministratorsWithoutBillingGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorsWithoutBillingGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-AdministratorsWithoutBillingGroup" }}
     },
     
     "NetworkAdministratorsGroup" : {
       "Description" : "The NetworkAdministratorsGroup Name",
       "Value" :  { "Ref" : "NetworkAdministratorsGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-NetworkAdministratorsGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-NetworkAdministratorsGroup" }}
     },
 
     "SystemAdministratorsGroup" : {
       "Description" : "The SystemAdministratorsGroup Name",
       "Value" :  { "Ref" : "SystemAdministratorsGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-SystemAdministratorsGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-SystemAdministratorsGroup" }}
     },
 
     "DatabaseAdministratorsGroup" : {
       "Description" : "The DatabaseAdministratorsGroup Name",
       "Value" :  { "Ref" : "DatabaseAdministratorsGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DatabaseAdministratorsGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-DatabaseAdministratorsGroup" }}
     },
 
     "DevelopersGroup" : {
       "Description" : "The DevelopersGroup Name",
       "Value" :  { "Ref" : "DevelopersGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-DevelopersGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-DevelopersGroup" }}
     },
 
     "UsersGroup" : {
       "Description" : "The UsersGroup Name",
       "Value" :  { "Ref" : "UsersGroup" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-UsersGroup" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-UsersGroup" }}
     }
   }
 }

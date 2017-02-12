@@ -3,7 +3,7 @@
     {
       "Effect" : "Allow",
       "Action" : "Update:*",
-      "Principal": "*",
+      "Principal" : "*",
       "Resource" : "*"
     }  
   ]

@@ -62,8 +62,8 @@
   },
 
   "Conditions" : {
-    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [ { "Ref" : "BuildMultiZoneNatGateways" }, "true" ]},
-    "CreateVPNGateway" : { "Fn::Equals" : [ { "Ref" : "BuildVPNGateway" }, "true" ]}
+    "CreateMultiZoneNatGateways" : { "Fn::Equals" : [{ "Ref" : "BuildMultiZoneNatGateways" }, "true" ]},
+    "CreateVPNGateway" : { "Fn::Equals" : [{ "Ref" : "BuildVPNGateway" }, "true" ]}
   },
 
   "Resources" : {

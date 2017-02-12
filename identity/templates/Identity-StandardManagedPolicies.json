@@ -5,29 +5,29 @@
 
   "Resources" : {
     "AdministratorAccessWithoutBilling" : {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
+      "Type" : "AWS::IAM::ManagedPolicy",
+      "Properties" : {
         "Description" : "Provides full access to AWS services and resources, except for Billing information.",
         "Path" : "/",
         "PolicyDocument" : {
-          "Version":"2012-10-17",
+          "Version" :"2012-10-17",
           "Statement" : [{
             "Sid" : "AllowAdministratorAccess",
-            "Effect": "Allow",
-            "Action": "*",
-            "Resource": "*"
+            "Effect" : "Allow",
+            "Action" : "*",
+            "Resource" : "*"
           },
           {
             "Sid" : "DenyBillingAccess",
-            "Effect": "Deny",
-            "Action": [
+            "Effect" : "Deny",
+            "Action" : [
                 "aws-portal:*Billing",
                 "aws-portal:*Usage",
                 "aws-portal:*PaymentMethods",
                 "budgets:ViewBudget",
                 "budgets:ModifyBudget"
             ],
-            "Resource": "*"
+            "Resource" : "*"
           }]
         }
       }
@@ -38,7 +38,7 @@
     "AdministratorAccessWithoutBilling" : {
       "Description" : "The AdministratorAccessWithoutBilling ManagedPolicy ARN",
       "Value" :  { "Ref" : "AdministratorAccessWithoutBilling" },
-      "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-AdministratorAccessWithoutBilling" }}
+      "Export" : { "Name" : { "Fn::Sub" : "${AWS::StackName}-AdministratorAccessWithoutBilling" }}
     }
   }
 }
