@@ -286,7 +286,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -301,7 +300,6 @@ else
     echo "                                --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
     echo "                                             ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-    echo "                                             ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
     echo "                                             ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -332,7 +330,6 @@ else
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-            echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -346,7 +343,6 @@ else
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Environment-VPC-StackPolicy.json \
                                             --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                         ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
                                                          ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
@@ -361,7 +357,6 @@ else
             echo ">                                 --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \\"
             echo ">                                              ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \\"
-            echo ">                                              ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \\"
             echo ">                                              ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=EnvironmentVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -375,7 +370,6 @@ else
                                             --stack-policy-body file://$templatesdir/Environment-VPC-StackPolicy.json \
                                             --parameters ParameterKey=EnvironmentName,ParameterValue=$ENVIRONMENT_NAME \
                                                          ParameterKey=EnvironmentNetwork,ParameterValue=$ENVIRONMENT_NETWORK \
-                                                         ParameterKey=EnvironmentMultiZoneSubnets,ParameterValue=$ENVIRONMENT_HA_SUBNETS \
                                                          ParameterKey=EnvironmentMultiZoneNatGateways,ParameterValue=$ENVIRONMENT_HA_NAT_GATEWAYS \
                                                          ParameterKey=EnvironmentVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \

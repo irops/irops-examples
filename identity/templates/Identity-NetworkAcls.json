@@ -9,16 +9,11 @@
         {
           "Label" : { "default" : "Stack Dependencies" },
           "Parameters" : [ "IdentityVPCStackName" ]
-        },
-        {
-          "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "IdentityMultiZoneSubnets" ]
         }
       ],
 
       "ParameterLabels" : {
-        "IdentityVPCStackName" : { "default" : "Identity VPC Stack Name" },
-        "IdentityMultiZoneSubnets" : { "default" : "Identity Multi-Zone Subnets" }
+        "IdentityVPCStackName" : { "default" : "Identity VPC Stack Name" }
       }
     }
   },
@@ -32,19 +27,7 @@
       "Default" : "Identity-VPC",
       "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
       "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
-    },
-
-    "IdentityMultiZoneSubnets" : {
-      "Description" : "Use Subnets in multiple Availability Zones",
-      "Type" : "String",
-      "Default" : "true",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
     }
-  },
-
-  "Conditions" : {
-    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "IdentityMultiZoneSubnets" }, "true" ]}
   },
 
   "Resources" : {
@@ -95,8 +78,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${IdentityVPCStackName}-PublicSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "PrivateNetworkAcl" : {
@@ -146,8 +128,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${IdentityVPCStackName}-IdentitySubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     }
   }
 }

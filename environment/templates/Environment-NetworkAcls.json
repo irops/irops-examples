@@ -12,14 +12,13 @@
         },
         {
           "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "EnvironmentName", "EnvironmentMultiZoneSubnets" ]
+          "Parameters" : [ "EnvironmentName" ]
         }
       ],
 
       "ParameterLabels" : {
         "EnvironmentVPCStackName" : { "default" : "Environment VPC Stack Name" },
-        "EnvironmentName" : { "default" : "Environment Name" },
-        "EnvironmentMultiZoneSubnets" : { "default" : "Environment Multi-Zone Subnets" }
+        "EnvironmentName" : { "default" : "Environment Name" }
       }
     }
   },
@@ -41,19 +40,7 @@
       "Default" : "Production",
       "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
       "ConstraintDescription" : "must be one of the following: Production, Staging, QA, Development."
-    },
-
-    "EnvironmentMultiZoneSubnets" : {
-      "Description" : "Use Subnets in multiple Availability Zones",
-      "Type" : "String",
-      "Default" : "true",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
     }
-  },
-
-  "Conditions" : {
-    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "EnvironmentMultiZoneSubnets" }, "true" ]}
   },
 
   "Resources" : {
@@ -104,8 +91,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-PublicSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "WebSubnetANetworkAclAssociation" : {
@@ -121,8 +107,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-WebSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "PrivateNetworkAcl" : {
@@ -172,8 +157,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-ApplicationSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "DatabaseSubnetANetworkAclAssociation" : {
@@ -189,8 +173,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-DatabaseSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "QueueSubnetANetworkAclAssociation" : {
@@ -206,8 +189,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-QueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "IdentitySubnetANetworkAclAssociation" : {
@@ -223,8 +205,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${EnvironmentVPCStackName}-IdentitySubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     }
   }
 }

@@ -285,7 +285,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                             ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=CoreVPNGateway,ParameterValue=true \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -299,7 +298,6 @@ else
     echo "                                --template-body file://$templatesdir/Core-VPC.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Core-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
-    echo "                                             ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
     echo "                                             ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=CoreVPNGateway,ParameterValue=true \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -329,7 +327,6 @@ else
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC.json \\"
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
-            echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
             echo ">                                              ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=CoreVPNGateway,ParameterValue=true \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -342,7 +339,6 @@ else
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC.json \
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Core-VPC-StackPolicy.json \
                                             --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \
-                                                         ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                                          ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \
                                                          ParameterKey=CoreVPNGateway,ParameterValue=true \
                                             --tags Key=Company,Value=$COMPANY_NAME \
@@ -356,7 +352,6 @@ else
             echo ">                                 --template-body file://$templatesdir/Core-VPC.json \\"
             echo ">                                 --stack-policy-body file://$templatesdir/Core-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \\"
-            echo ">                                              ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \\"
             echo ">                                              ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=CoreVPNGateway,ParameterValue=true \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -369,7 +364,6 @@ else
                                             --template-body file://$templatesdir/Core-VPC.json \
                                             --stack-policy-body file://$templatesdir/Core-VPC-StackPolicy.json \
                                             --parameters ParameterKey=CoreNetwork,ParameterValue=$CORE_NETWORK \
-                                                         ParameterKey=CoreMultiZoneSubnets,ParameterValue=$CORE_HA_SUBNETS \
                                                          ParameterKey=CoreMultiZoneNatGateways,ParameterValue=$CORE_HA_NAT_GATEWAYS \
                                                          ParameterKey=CoreVPNGateway,ParameterValue=true \
                                             --tags Key=Company,Value=$COMPANY_NAME \

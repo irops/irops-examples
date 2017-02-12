@@ -9,16 +9,11 @@
         {
           "Label" : { "default" : "Stack Dependencies" },
           "Parameters" : [ "BuildVPCStackName" ]
-        },
-        {
-          "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "BuildMultiZoneSubnets" ]
         }
       ],
 
       "ParameterLabels" : {
-        "BuildVPCStackName" : { "default" : "Build VPC Stack Name" },
-        "BuildMultiZoneSubnets" : { "default" : "Build Multi-Zone Subnets" }
+        "BuildVPCStackName" : { "default" : "Build VPC Stack Name" }
       }
     }
   },
@@ -32,19 +27,7 @@
       "Default" : "Build-VPC",
       "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
       "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
-    },
-
-    "BuildMultiZoneSubnets" : {
-      "Description" : "Use Subnets in multiple Availability Zones",
-      "Type" : "String",
-      "Default" : "true",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
     }
-  },
-
-  "Conditions" : {
-    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "BuildMultiZoneSubnets" }, "true" ]}
   },
 
   "Resources" : {
@@ -95,8 +78,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-PublicSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "WebSubnetANetworkAclAssociation" : {
@@ -112,8 +94,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-WebSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "PrivateNetworkAcl" : {
@@ -163,8 +144,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-ApplicationSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "DatabaseSubnetANetworkAclAssociation" : {
@@ -180,8 +160,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-DatabaseSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "BuildSubnetANetworkAclAssociation" : {
@@ -197,8 +176,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${BuildVPCStackName}-BuildSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     }
   }
 }

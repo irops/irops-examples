@@ -291,7 +291,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \\"
-    echo "                                             ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
     echo "                                             ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -305,7 +304,6 @@ else
     echo "                                --template-body file://$templatesdir/Identity-VPC.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Identity-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \\"
-    echo "                                             ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
     echo "                                             ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -325,7 +323,6 @@ if [ $choice = y ]; then
         echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC.json \\"
         echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \\"
-        echo ">                                              ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
         echo ">                                              ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \\"
         echo ">                                              ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -338,7 +335,6 @@ if [ $choice = y ]; then
                                         --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC.json \
                                         --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-VPC-StackPolicy.json \
                                         --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \
-                                                     ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                                      ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \
                                                      ParameterKey=IdentityVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \
@@ -352,7 +348,6 @@ if [ $choice = y ]; then
         echo ">                                 --template-body file://$templatesdir/Identity-VPC.json \\"
         echo ">                                 --stack-policy-body file://$templatesdir/Identity-VPC-StackPolicy.json \\"
         echo ">                                 --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \\"
-        echo ">                                              ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
         echo ">                                              ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \\"
         echo ">                                              ParameterKey=IdentityVPNGateway,ParameterValue=false \\"
         echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -365,7 +360,6 @@ if [ $choice = y ]; then
                                         --template-body file://$templatesdir/Identity-VPC.json \
                                         --stack-policy-body file://$templatesdir/Identity-VPC-StackPolicy.json \
                                         --parameters ParameterKey=IdentityNetwork,ParameterValue=$IDENTITY_NETWORK \
-                                                     ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                                      ParameterKey=IdentityMultiZoneNatGateways,ParameterValue=$IDENTITY_HA_NAT_GATEWAYS \
                                                      ParameterKey=IdentityVPNGateway,ParameterValue=false \
                                         --tags Key=Company,Value=$COMPANY_NAME \

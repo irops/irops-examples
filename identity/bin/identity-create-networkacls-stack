@@ -291,7 +291,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \\"
-    echo "                                             ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Identity \\"
@@ -303,7 +302,6 @@ else
     echo "                                --template-body file://$templatesdir/Identity-NetworkAcls.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Identity-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \\"
-    echo "                                             ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Identity \\"
@@ -331,7 +329,6 @@ else
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls.json \\"
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \\"
-            echo ">                                              ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Identity \\"
@@ -342,7 +339,6 @@ else
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls.json \
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Identity-NetworkAcls-StackPolicy.json \
                                             --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \
-                                                         ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Identity \
@@ -354,7 +350,6 @@ else
             echo ">                                 --template-body file://$templatesdir/Identity-NetworkAcls.json \\"
             echo ">                                 --stack-policy-body file://$templatesdir/Identity-NetworkAcls-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \\"
-            echo ">                                              ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Identity \\"
@@ -365,7 +360,6 @@ else
                                             --template-body file://$templatesdir/Identity-NetworkAcls.json \
                                             --stack-policy-body file://$templatesdir/Identity-NetworkAcls-StackPolicy.json \
                                             --parameters ParameterKey=IdentityVPCStackName,ParameterValue=Identity-VPC \
-                                                         ParameterKey=IdentityMultiZoneSubnets,ParameterValue=$IDENTITY_HA_SUBNETS \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Identity \

@@ -291,7 +291,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Build \\"
@@ -303,7 +302,6 @@ else
     echo "                                --template-body file://$templatesdir/Build-NetworkAcls.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Build-NetworkAcls-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
     echo "                                       Key=System,Value=$SYSTEM_NAME \\"
     echo "                                       Key=Environment,Value=Build \\"
@@ -331,7 +329,6 @@ else
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls.json \\"
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \\"
-            echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Build \\"
@@ -342,7 +339,6 @@ else
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls.json \
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-NetworkAcls-StackPolicy.json \
                                             --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \
-                                                         ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Build \
@@ -354,7 +350,6 @@ else
             echo ">                                 --template-body file://$templatesdir/Build-NetworkAcls.json \\"
             echo ">                                 --stack-policy-body file://$templatesdir/Build-NetworkAcls-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \\"
-            echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
             echo ">                                        Key=System,Value=$SYSTEM_NAME \\"
             echo ">                                        Key=Environment,Value=Build \\"
@@ -365,7 +360,6 @@ else
                                             --template-body file://$templatesdir/Build-NetworkAcls.json \
                                             --stack-policy-body file://$templatesdir/Build-NetworkAcls-StackPolicy.json \
                                             --parameters ParameterKey=BuildVPCStackName,ParameterValue=Build-VPC \
-                                                         ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                             --tags Key=Company,Value=$COMPANY_NAME \
                                                    Key=System,Value=$SYSTEM_NAME \
                                                    Key=Environment,Value=Build \

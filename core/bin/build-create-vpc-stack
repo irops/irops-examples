@@ -285,7 +285,6 @@ if [ ! -z $templatesbucket ]; then
     echo "                                --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
     echo "                                --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=BuildVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -299,7 +298,6 @@ else
     echo "                                --template-body file://$templatesdir/Build-VPC.json \\"
     echo "                                --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
     echo "                                --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-    echo "                                             ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
     echo "                                             ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
     echo "                                             ParameterKey=BuildVPNGateway,ParameterValue=false \\"
     echo "                                --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -329,7 +327,6 @@ else
             echo ">                                 --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \\"
             echo ">                                 --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-            echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
             echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=BuildVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -342,7 +339,6 @@ else
                                             --template-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC.json \
                                             --stack-policy-url https://$s3_domain/$templatesbucket$templatespath/Build-VPC-StackPolicy.json \
                                             --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
-                                                         ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                          ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
                                                          ParameterKey=BuildVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \
@@ -356,7 +352,6 @@ else
             echo ">                                 --template-body file://$templatesdir/Build-VPC.json \\"
             echo ">                                 --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \\"
             echo ">                                 --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \\"
-            echo ">                                              ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \\"
             echo ">                                              ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \\"
             echo ">                                              ParameterKey=BuildVPNGateway,ParameterValue=false \\"
             echo ">                                 --tags Key=Company,Value=$COMPANY_NAME \\"
@@ -369,7 +364,6 @@ else
                                             --template-body file://$templatesdir/Build-VPC.json \
                                             --stack-policy-body file://$templatesdir/Build-VPC-StackPolicy.json \
                                             --parameters ParameterKey=BuildNetwork,ParameterValue=$BUILD_NETWORK \
-                                                         ParameterKey=BuildMultiZoneSubnets,ParameterValue=$BUILD_HA_SUBNETS \
                                                          ParameterKey=BuildMultiZoneNatGateways,ParameterValue=$BUILD_HA_NAT_GATEWAYS \
                                                          ParameterKey=BuildVPNGateway,ParameterValue=false \
                                             --tags Key=Company,Value=$COMPANY_NAME \

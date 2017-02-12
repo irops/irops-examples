@@ -9,16 +9,11 @@
         {
           "Label" : { "default" : "Stack Dependencies" },
           "Parameters" : [ "CoreVPCStackName" ]
-        },
-        {
-          "Label" : { "default" : "VPC Configuration" },
-          "Parameters" : [ "CoreMultiZoneSubnets" ]
         }
       ],
 
       "ParameterLabels" : {
-        "CoreVPCStackName" : { "default" : "Core VPC Stack Name" },
-        "CoreMultiZoneSubnets" : { "default" : "Core Multi-Zone Subnets" }
+        "CoreVPCStackName" : { "default" : "Core VPC Stack Name" }
       }
     }
   },
@@ -32,19 +27,7 @@
       "Default" : "Core-VPC",
       "AllowedPattern" : "^[A-Z][-a-zA-Z0-9]*$",
       "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers, or a hyphen."
-    },
-
-    "CoreMultiZoneSubnets" : {
-      "Description" : "Use Subnets in multiple Availability Zones",
-      "Type" : "String",
-      "Default" : "true",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
     }
-  },
-
-  "Conditions" : {
-    "UseMultiZoneSubnets" : { "Fn::Equals" : [ { "Ref" : "CoreMultiZoneSubnets" }, "true" ]}
   },
 
   "Resources" : {
@@ -95,8 +78,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-PublicSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "WebSubnetANetworkAclAssociation" : {
@@ -112,8 +94,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-WebSubnetB" } },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "PrivateNetworkAcl" : {
@@ -163,8 +144,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ApplicationSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "DatabaseSubnetANetworkAclAssociation" : {
@@ -180,8 +160,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DatabaseSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "ProductionQueueSubnetANetworkAclAssociation" : {
@@ -197,8 +176,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-ProductionQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "StagingQueueSubnetANetworkAclAssociation" : {
@@ -214,8 +192,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-StagingQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "QAQueueSubnetANetworkAclAssociation" : {
@@ -231,8 +208,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-QAQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     },
 
     "DevelopmentQueueSubnetANetworkAclAssociation" : {
@@ -248,8 +224,7 @@
       "Properties" : {
         "SubnetId" : { "Fn::ImportValue" : {"Fn::Sub": "${CoreVPCStackName}-DevelopmentQueueSubnetB" } },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
-      },
-      "Condition" : "UseMultiZoneSubnets"
+      }
     }
   }
 }
