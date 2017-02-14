@@ -153,10 +153,22 @@ shift $(($OPTIND - 1))
 
 #  4. Validate environment
 
+if [ -z $environment ]; then
+    echo "-E environment missing!"
+    echo "Could not automatically determine environment, and it was not specified as a parameter"
+    exit 16
+fi
+
+if [ -z $application ]; then
+    echo "-A application missing!"
+    echo "Could not automatically determine application, and it was not specified as a parameter"
+    exit 20
+fi
+
 if [ -z $region ]; then
     echo "-r region missing!"
     echo "Could not automatically determine region, and it was not specified as a parameter"
-    exit 20
+    exit 50
 else
     case $region in
       us-east-1)
@@ -165,20 +177,20 @@ else
         s3_domain=s3-$region.amazonaws.com;;
     *)
         echo "-r $region invalid: Please specify a valid region"
-        exit 21;;
+        exit 51;;
     esac
 fi
 
 if [ -z $account ]; then
     echo "-a account missing!"
     echo "Could not automatically determine account, and it was not specified as a parameter"
-    exit 22
+    exit 52
 fi
 
 if [ -z $user ]; then
     echo "-u user missing!"
     echo "Could not automatically determine user, and it was not specified as a parameter"
-    exit 24
+    exit 54
 fi
 
 profile=$account-$user
@@ -186,13 +198,13 @@ profile=$account-$user
 if ! grep -s -q "\[profile $profile]" ~/.aws/config; then
     echo "Could not find ($account) Account ($user) User AWSCLI profile!"
     echo "Expected to find: [profile $profile] in ~/.aws/config"
-    exit 53
+    exit 60
 fi
 
-if ! aws cloudformation describe-stacks --stack-name Build-NetworkAcls \
+if ! aws cloudformation describe-stacks --stack-name $environment-$application \
                                         --profile $profile --region $region --output text &> /dev/null; then
-    echo "Unable to delete - Build-NetworkAcls Stack does not exist!"
-    exit 2
+    echo "Unable to delete - $environment-$application Stack does not exist!"
+    exit 70
 fi
 
 # Prevent certain environment variables from breaking commands
@@ -212,7 +224,7 @@ aws cloudformation describe-stacks --query 'Stacks[].[StackName,StackStatus]' \\
                                    --profile $profile --region $region --output table
 EOS
 run_statement=$(echo "$statement" | sed -e '1s/^/# /;2,$ s/^/> /')
-eval_statement="${statement//\\$'\n'} 2> /dev/null"
+eval_statement="${statement//\\$'\n'}"
 
 if [ $verbose = 1 ]; then
     clear
@@ -361,7 +373,7 @@ aws cloudformation describe-stacks --query 'Stacks[].[StackName,StackStatus]' \\
                                    --profile $profile --region $region --output table
 EOS
 run_statement=$(echo "$statement" | sed -e '1s/^/# /;2,$ s/^/> /')
-eval_statement="${statement//\\$'\n'} 2> /dev/null"
+eval_statement="${statement//\\$'\n'}"
 
 if [ $verbose = 1 ]; then
     clear

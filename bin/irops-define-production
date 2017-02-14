@@ -20,18 +20,21 @@ export SYSTEM_NAME="IROPS"
 # Environment
 export ENVIRONMENT_CODE=p
 export ENVIRONMENT_NAME="Production"
+export ENVIRONMENT_DOMAIN=$COMPANY_CODE.iropshub.com
 export ENVIRONMENT_NETWORK=10.40.0.0/16
 export ENVIRONMENT_HA_NAT_GATEWAYS=true
 
 # Core
 export CORE_CODE=c
 export CORE_NAME="Core"
+export CORE_DOMAIN=$COMPANY_CODE.iropshub.com
 export CORE_NETWORK=10.46.0.0/16
 export CORE_HA_NAT_GATEWAYS=false
 
 # Build
 export BUILD_CODE=b
 export BUILD_NAME="Build"
+export BUILD_DOMAIN=$COMPANY_CODE.iropshub.com
 export BUILD_NETWORK=10.47.0.0/16
 export BUILD_HA_NAT_GATEWAYS=false
 

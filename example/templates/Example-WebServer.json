@@ -16,9 +16,9 @@
             "CompanyName",
             "SystemName",
             "EnvironmentName",
+            "EnvironmentDomain",
             "ApplicationName",
             "ApplicationVersion",
-            "ApplicationDomain",
             "ApplicationBucket",
             "KeyName",
             "AdministratorNetwork"
@@ -31,9 +31,9 @@
         "CompanyName" : { "default" : "Company Name" },
         "SystemName" : { "default" : "System Name" },
         "EnvironmentName" : { "default" : "Environment Name" },
+        "EnvironmentDomain" : { "default" : "Environment Domain" },
         "ApplicationName" : { "default" : "Application Name" },
         "ApplicationVersion" : { "default" : "Application Version" },
-        "ApplicationDomain" : { "default" : "Application Domain" },
         "ApplicationBucket" : { "default" : "Application Bucket" },
         "KeyName" : { "default" : "Key Name" },
         "AdministratorNetwork" : { "default" : "Administrator Network" }
@@ -43,7 +43,7 @@
 
   "Parameters" : {
     "EnvironmentVPCStackName" : {
-      "Description" : "Name of the CloudFormation Stack containing the Environment VPC.",
+      "Description" : "Name of the CloudFormation Stack containing the Environment VPC",
       "Type" : "String",
       "MinLength" : 8,
       "MaxLength" : 64,
@@ -53,41 +53,51 @@
     },
 
     "CompanyName" : {
-      "Description" : "A company name that will be prefixed to resource names",
+      "Description" : "Name of the Company associated with the Stack",
       "Type" : "String",
       "MinLength" : 2,
       "MaxLength" : 32,
       "Default" : "Demo",
       "AllowedPattern" : "^[A-Z][a-zA-Z0-9]*$",
-      "ConstraintDescription" : "can contain only alphanumeric characters."
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers."
     },
 
     "SystemName" : {
-      "Description" : "A system name that will be prefixed to resource names",
+      "Description" : "Name of the System associated with the Stack",
       "Type" : "String",
       "MinLength" : 2,
       "MaxLength" : 32,
       "Default" : "IROPS",
       "AllowedPattern" : "^[A-Z][a-zA-Z0-9]*$",
-      "ConstraintDescription" : "can contain only alphanumeric characters."
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers."
     },
 
     "EnvironmentName" : {
-      "Description" : "An environment name that will be prefixed to resource names",
+      "Description" : "Name of the Environment associated with the Stack",
       "Type" : "String",
       "Default" : "Production",
       "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
       "ConstraintDescription" : "must be one of the following: Production, Staging, QA, Development."
     },
 
-    "ApplicationName" : {
-      "Description" : "An application name that will be appended to resource names",
+    "EnvironmentDomain" : {
+      "Description" : "Domain of the Environment associated with the Stack",
       "Type" : "String",
       "MinLength" : 2,
       "MaxLength" : 32,
-      "Default" : "ExampleWebServer",
+      "Default" : "demo.iropshub.com",
+      "AllowedPattern" : "^[a-z][-.a-z0-9]*$",
+      "ConstraintDescription" : "can contain only lower-case letters, numbers, hyphens and periods."
+    },
+
+    "ApplicationName" : {
+      "Description" : "Name of the Application associated with the Stack",
+      "Type" : "String",
+      "MinLength" : 2,
+      "MaxLength" : 32,
+      "Default" : "WebServer",
       "AllowedPattern" : "^[A-Z][a-zA-Z0-9]*$",
-      "ConstraintDescription" : "can contain only alphanumeric characters."
+      "ConstraintDescription" : "must begin with an upper case letter and contain upper and lower case letters and numbers."
     },
 
     "ApplicationVersion" : {
@@ -100,24 +110,14 @@
       "ConstraintDescription" : "must be semantic versioning conventions."
     },
 
-    "ApplicationDomain" : {
-      "Description" : "The domain of the application to be deployed",
-      "Type" : "String",
-      "MinLength" : 2,
-      "MaxLength" : 32,
-      "Default" : "demo.iropshub.com",
-      "AllowedPattern" : "^[a-z][-.a-z0-9]*$",
-      "ConstraintDescription" : "can contain only lower-case letters, digits, hyphens and periods."
-    },
-
     "ApplicationBucket" : {
       "Description" : "The S3 bucket containing the version of the application to be deployed",
       "Type" : "String",
       "MinLength" : 2,
       "MaxLength" : 32,
       "Default" : "applications-irops",
-      "AllowedPattern" : "^[a-zA-Z][-a-zA-Z0-9]*$",
-      "ConstraintDescription" : "can contain only alphanumeric characters or hyphens."
+      "AllowedPattern" : "^[a-z][-a-z0-9]*$",
+      "ConstraintDescription" : "can contain only lower-case letters, numbers and hyphens."
     },
 
     "KeyName" : {
