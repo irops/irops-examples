@@ -23,7 +23,7 @@
 
   "Parameters" : {
     "EnvironmentName" : {
-      "Description" : "Name of the Environment associated with the Stack.",
+      "Description" : "Name of the Environment associated with the Stack",
       "Type" : "String",
       "Default" : "Production",
       "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
@@ -45,7 +45,6 @@
       "AllowedValues" : [ "true", "false" ],
       "ConstraintDescription" : "must be either true or false."
     },
-
 
     "EnvironmentVPNGateway" : {
       "Description" : "Create VPNGateway",

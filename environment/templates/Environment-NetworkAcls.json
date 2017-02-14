@@ -25,7 +25,7 @@
 
   "Parameters" : {
     "EnvironmentVPCStackName" : {
-      "Description" : "Name of the CloudFormation Stack containing the Environment VPC.",
+      "Description" : "Name of the CloudFormation Stack containing the Environment VPC",
       "Type" : "String",
       "MinLength" : 8,
       "MaxLength" : 64,
@@ -35,7 +35,7 @@
     },
 
     "EnvironmentName" : {
-      "Description" : "Name of the Environment associated with the Stack.",
+      "Description" : "Name of the Environment associated with the Stack",
       "Type" : "String",
       "Default" : "Production",
       "AllowedValues" : [ "Production", "Staging", "QA", "Development" ],
